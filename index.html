@@ -1,0 +1,2288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Angelica Zhuang — Portfolio</title>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#1f3b3a"/><text x="50" y="62" text-anchor="middle" font-family="Georgia, serif" font-size="34" fill="#f6efe2">AZ</text></svg></template>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.184.0/build/three.module.js",
+    "three/addons/controls/OrbitControls.js": "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js",
+    "three/addons/exporters/OBJExporter.js": "https://unpkg.com/three@0.184.0/examples/jsm/exporters/OBJExporter.js",
+    "three/addons/exporters/GLTFExporter.js": "https://unpkg.com/three@0.184.0/examples/jsm/exporters/GLTFExporter.js"
+  },
+  "integrity": {
+    "https://unpkg.com/three@0.184.0/build/three.module.js": "sha384-8FCZ1eVO6it4+pbec2aDtnTrwjWXZLJRC+MAGCIPDgsYnUrl/E0A2YlF8ioMKI/J",
+    "https://unpkg.com/three@0.184.0/build/three.core.js": "sha384-dw2ooPewaEIrAgl6oFDBmmBWCE9oW9LxRGcfwZ0hLvEprzo202wXl7vCYHRlSnOT",
+    "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js": "sha384-4rziNxOBZKQ69i+w+f89KJ55TCYquwchVbByQwmaOeIOXdOU2PLDn3kOfXHwIJC9",
+    "https://unpkg.com/three@0.184.0/examples/jsm/exporters/OBJExporter.js": "sha384-nbwtoZENJD3Vq+ACK0CuGQdPMuDWHkamC2KJD70EV5nfg6jQjfppKOea07YJN+N3",
+    "https://unpkg.com/three@0.184.0/examples/jsm/exporters/GLTFExporter.js": "sha384-VofkvpG6HERhFCYbsUOHeNXBCqID2nfqkQqnVzE1jc/oPcz+qJ13ADdXH08hE+cQ"
+  }
+}
+</script>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; }
+  body {
+    background: linear-gradient(#fdf6ea 0%, #e6f4ea 26%, #9fd9cf 54%, #4aa8a2 100%);
+    font-family: "Space Grotesk", Helvetica, sans-serif;
+    color: #1f3b3a;
+    transition: background 900ms ease, color 900ms ease;
+  }
+  body.night { background: linear-gradient(#1a2a3e 0%, #23405a 45%, #16344c 100%); color: #e8eef5; }
+  #scene { position: fixed; inset: 0; }
+  canvas { display: block; touch-action: none; }
+  .mono { font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  header {
+    position: fixed; top: 28px; left: 32px; z-index: 3; pointer-events: none;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  header h1 { margin: 0; font-size: 19px; font-weight: 700; letter-spacing: -0.01em; }
+  header .mono { opacity: 0.55; }
+  #corner { display: flex; gap: 14px; opacity: 1; pointer-events: auto; margin-top: 4px; }
+  #corner a, #corner button { color: inherit; opacity: 0.7; text-decoration: none; background: none; border: 0; padding: 0; font: inherit; letter-spacing: inherit; text-transform: inherit; cursor: pointer; border-bottom: 1px solid currentColor; }
+  #corner a:hover, #corner button:hover, #corner button[aria-expanded="true"] { opacity: 1; }
+  #about { pointer-events: auto; max-width: 340px; margin-top: 8px; padding: 16px 18px; border-radius: 6px; background: color-mix(in oklab, #f6efe2 94%, transparent); box-shadow: 0 10px 30px rgba(31,59,58,0.14); font-size: 13.5px; line-height: 1.55; text-wrap: pretty; }
+  body.night #about { background: color-mix(in oklab, #22344a 94%, transparent); }
+  #about p { margin: 0 0 10px; }
+  #about-contact { display: flex; flex-wrap: wrap; gap: 14px; opacity: 1 !important; margin-top: 4px; }
+  #about-contact a { color: inherit; opacity: 0.75; }
+  #about-contact a:hover { opacity: 1; }
+
+  #index { position: fixed; inset: 0; z-index: 7; overflow-y: auto; background: color-mix(in oklab, #f6efe2 93%, transparent); backdrop-filter: blur(6px); color: #1f3b3a; opacity: 0; pointer-events: none; transition: opacity 260ms ease; }
+  #index.open { opacity: 1; pointer-events: auto; }
+  body.night #index { background: color-mix(in oklab, #1a2a3e 94%, transparent); color: #e8eef5; }
+  #ix-inner { max-width: 1180px; margin: 0 auto; padding: 28px 32px 80px; display: flex; flex-direction: column; gap: 28px; }
+  #ix-top { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
+  #ix-top h2 { margin: 0; font-size: 19px; font-weight: 700; letter-spacing: -0.01em; }
+  #ix-close { background: none; border: 1px solid currentColor; color: inherit; border-radius: 999px; padding: 8px 13px; cursor: pointer; opacity: .7; }
+  #ix-close:hover { opacity: 1; }
+  #ix-filters { display: flex; flex-wrap: wrap; gap: 8px; }
+  #ix-filters button { font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; padding: 8px 13px; border-radius: 999px; border: 1px solid currentColor; background: transparent; color: inherit; cursor: pointer; opacity: .6; display: flex; gap: 6px; }
+  #ix-filters button:hover { opacity: 1; }
+  #ix-filters button[aria-pressed="true"] { opacity: 1; background: #1f3b3a; color: #f6efe2; border-color: #1f3b3a; }
+  body.night #ix-filters button[aria-pressed="true"] { background: #f6efe2; color: #1f3b3a; border-color: #f6efe2; }
+  #ix-filters button span { opacity: .55; }
+  .ix-sec { display: flex; flex-direction: column; gap: 14px; }
+  .ix-sec h3 { margin: 0; padding-bottom: 8px; border-bottom: 1px solid color-mix(in oklab, currentColor 22%, transparent); display: flex; justify-content: space-between; }
+  .ix-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: 26px 20px; }
+  .ix-card { display: flex; flex-direction: column; gap: 8px; text-align: left; background: none; border: 0; padding: 0; color: inherit; font: inherit; cursor: pointer; }
+  .ix-thumb { aspect-ratio: 4 / 3; border-radius: 4px; overflow: hidden; background: color-mix(in oklab, currentColor 8%, transparent); }
+  .ix-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 400ms ease; }
+  .ix-card:hover .ix-thumb img { transform: scale(1.04); }
+  .ix-card strong { font-size: 15px; font-weight: 600; line-height: 1.3; text-wrap: pretty; }
+  .ix-card:hover strong { text-decoration: underline; text-underline-offset: 3px; }
+  .ix-card .mono { opacity: .6; font-size: 10px; }
+  @media (max-width: 760px) { #ix-inner { padding: 22px 16px 60px; gap: 22px; } .ix-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 12px; } }
+
+  #hint {
+    position: fixed; bottom: 30px; left: 32px; z-index: 3;
+    opacity: 0.9; transition: opacity 400ms ease;
+    font-size: 12.5px; font-weight: 600;
+  }
+  #controls {
+    position: fixed; bottom: 26px; right: 32px; z-index: 4;
+    display: flex; gap: 8px;
+  }
+  #controls button {
+    font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: 0.08em;
+    text-transform: uppercase; cursor: pointer;
+    padding: 9px 13px; border-radius: 999px;
+    border: 1px solid currentColor; background: transparent; color: inherit;
+    opacity: 0.55; transition: opacity 200ms ease, background 200ms ease;
+  }
+  #controls button:hover { opacity: 1; }
+  #controls button[aria-pressed="true"] { opacity: 1; background: color-mix(in oklab, currentColor 12%, transparent); }
+  #btn-view.nudge {
+    opacity: 1;
+    background: color-mix(in oklab, currentColor 10%, transparent);
+    animation: viewPulse 2.4s ease-in-out infinite;
+  }
+  #btn-view.nudge::after {
+    content: ""; position: absolute; inset: -3px; border-radius: 999px;
+    border: 1px solid currentColor; opacity: 0;
+    animation: viewRing 2.4s ease-out infinite;
+    pointer-events: none;
+  }
+  #controls button { position: relative; }
+  #controls #btn-view { opacity: 1; background: #1f3b3a; color: #f6efe2; border-color: #1f3b3a; font-weight: 700; padding: 10px 16px; box-shadow: 0 6px 18px rgba(31,59,58,.28); }
+  #controls #btn-view:hover { background: #2c5250; }
+  body.night #controls #btn-view { background: #f6efe2; color: #1f3b3a; border-color: #f6efe2; box-shadow: 0 6px 18px rgba(0,0,0,.35); }
+  #btn-view.nudge::after { border-color: #1f3b3a; }
+  @keyframes viewPulse {
+    0%, 100% { box-shadow: 0 0 0 0 color-mix(in oklab, currentColor 0%, transparent); }
+    50% { box-shadow: 0 0 0 4px color-mix(in oklab, currentColor 10%, transparent); }
+  }
+  @keyframes viewRing {
+    0% { transform: scale(1); opacity: 0.55; }
+    70% { transform: scale(1.22); opacity: 0; }
+    100% { transform: scale(1.22); opacity: 0; }
+  }
+  body.night #btn-view.nudge { background: color-mix(in oklab, currentColor 18%, transparent); }
+  body.night #btn-view.nudge::after { border-color: #f6efe2; }
+  @media (prefers-reduced-motion: reduce) {
+    #btn-view.nudge, #btn-view.nudge::after { animation: none; }
+  }
+
+  #panel {
+    position: fixed; z-index: 5; top: 0; right: 0; height: 100%;
+    width: min(420px, 42vw); padding: 96px 44px 44px;
+    display: flex; flex-direction: column; gap: 18px;
+    background: color-mix(in oklab, #f6efe2 90%, transparent);
+    backdrop-filter: blur(14px);
+    border-left: 1px solid rgba(0,0,0,0.08);
+    transform: translateX(102%); transition: transform 620ms cubic-bezier(.2,.8,.2,1);
+    overflow-y: auto;
+  }
+  body.night #panel { background: color-mix(in oklab, #22334a 90%, transparent); border-left-color: rgba(255,255,255,0.1); }
+  #panel.open { transform: none; }
+  #p-expand-tab {
+    position: fixed; top: 50%; right: min(420px, 42vw); transform: translateY(-50%); z-index: 6;
+    width: 30px; height: 74px; cursor: pointer;
+    display: grid; place-items: center; font-size: 14px;
+    border: 1px solid rgba(31,59,58,0.2); border-right: none;
+    border-radius: 4px 0 0 4px;
+    background: color-mix(in oklab, #f6efe2 92%, transparent); color: #1f3b3a;
+    opacity: 0; pointer-events: none; transition: opacity 180ms ease, background 180ms ease;
+  }
+  #panel.open ~ #p-expand-tab { opacity: .85; pointer-events: auto; }
+  #p-expand-tab:hover { opacity: 1; background: #f6efe2; }
+  body.night #p-expand-tab { background: color-mix(in oklab, #22334a 92%, transparent); color: #f6efe2; border-color: rgba(255,255,255,0.16); }
+  #panel .tag { color: oklch(0.62 0.13 12); }
+  #panel h2 { margin: 0; font-size: 31px; line-height: 1.08; letter-spacing: -0.02em; font-weight: 700; }
+  #panel #p-body { display: flex; flex-direction: column; gap: 11px; }
+  #panel p { margin: 0; font-size: 15px; line-height: 1.6; opacity: 0.78; text-wrap: pretty; }
+  #panel .credit { font-size: 12.5px; line-height: 1.5; opacity: 0.75; border-left: 0; padding-top: 2px; }
+  #panel .credit:empty { display: none; }
+  #panel .meta { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 4px; }
+  #panel .meta span {
+    font-family: "JetBrains Mono", monospace; font-size: 10px; letter-spacing: 0.08em;
+    text-transform: uppercase; padding: 0; border: 0; opacity: 0.5;
+  }
+  #panel .shot {
+    margin-top: 8px; aspect-ratio: 4/3; border-radius: 4px;
+    background-image: repeating-linear-gradient(135deg, rgba(0,0,0,.07) 0 6px, transparent 6px 12px);
+    border: 1px solid rgba(0,0,0,0.12);
+    display: grid; place-items: center;
+  }
+  body.night #panel .shot { border-color: rgba(255,255,255,.14); background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.07) 0 6px, transparent 6px 12px); }
+  #panel .shot span { font-family: "JetBrains Mono", monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; opacity: .5; }
+  #panel .shot.layered { position: relative; overflow: hidden; background-image: none; background: #fbf8f2; cursor: pointer; aspect-ratio: 5/4; flex: 0 0 auto; min-height: 240px; }
+  body.night #panel .shot.layered { background: #e9e6df; }
+  #panel .shot img { display: none; }
+  #panel .shot.layered img { display: block; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+  #panel .shot.layered #p-layer-b {
+    transform-origin: 100% 100%;
+    transition: transform 900ms cubic-bezier(.32,.72,.2,1), filter 900ms ease;
+    will-change: transform;
+  }
+  #panel .shot.layered.lifted #p-layer-b {
+    transform: rotate(-13deg) translate(26%, -116%);
+    filter: drop-shadow(-6px 10px 14px rgba(31,59,58,0.22));
+    transition: transform 900ms cubic-bezier(.32,.72,.2,1), filter 140ms ease-out;
+  }
+  #panel .shot.layered #p-shot { display: none; }
+  #panel .expand {
+    position: absolute; top: 8px; right: 8px; z-index: 2;
+    font-family: "JetBrains Mono", monospace; font-size: 10px; letter-spacing: 0.09em;
+    text-transform: uppercase; cursor: pointer;
+    padding: 5px 9px; border-radius: 999px;
+    border: 1px solid rgba(31,59,58,0.35); background: rgba(246,239,226,0.92); color: #1f3b3a;
+    opacity: .85; transition: opacity 200ms ease;
+  }
+  #panel .expand { display: none; }
+  #panel .shot.single .expand, #panel .shot.layered .expand { display: block; }
+  #panel .expand:hover { opacity: 1; }
+  #panel .shot.single { position: relative; overflow: hidden; background-image: none; background: transparent; aspect-ratio: auto; flex: 0 0 auto; min-height: 0; display: block; }
+  body.night #panel .shot.single { background: transparent; }
+  #panel .shot.single #p-layer-a { display: block; position: static; width: 100%; height: auto; }
+  #panel .shot.single #p-shot { display: none; }
+  #p-credit a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+  #p-credit a:hover { opacity: .65; }
+  #p-rail { display: flex; flex-wrap: wrap; gap: 6px; }
+  #p-rail:empty { display: none; }
+  #p-rail button {
+    font-family: "JetBrains Mono", monospace; font-size: 10px; letter-spacing: .08em;
+    text-transform: uppercase; padding: 6px 10px; border-radius: 999px;
+    border: 1px solid currentColor; background: transparent; color: inherit;
+    opacity: .42; cursor: pointer; transition: opacity 160ms ease, background 160ms ease;
+  }
+  #p-rail button:hover { opacity: .8; }
+  #p-rail button[aria-current="true"] { opacity: 1; background: #1f3b3a; color: #f6efe2; border-color: #1f3b3a; }
+  body.night #p-rail button[aria-current="true"] { background: #f6efe2; color: #1f3b3a; border-color: #f6efe2; }
+  #panel p#p-caption { font-size: 13px; line-height: 1.55; opacity: 0.8; text-wrap: pretty; white-space: pre-line; }
+  #p-caption:empty { display: none; }
+  #p-thumbs, #lb-thumbs { display: flex; flex-wrap: wrap; gap: 8px; }
+  #lb-thumbs { justify-content: center; max-width: min(78vw, 1180px); flex-shrink: 0; }
+  #lb-bar { flex-shrink: 0; }
+  #p-thumbs:empty, #lb-thumbs:empty { display: none; }
+  img[src^="img/grid-"] { background: #fff; }
+  #panel .shot { position: relative; }
+  #p-video, #lb-video { position: absolute; inset: 0; z-index: 3; }
+  #p-video:empty, #lb-video:empty { display: none; }
+  #p-video iframe, #lb-video iframe { width: 100%; height: 100%; border: 0; display: block; }
+  #p-video a {
+    position: absolute; right: 8px; bottom: 8px; z-index: 4;
+    padding: 5px 9px; border-radius: 999px; background: #1f3b3a; color: #f6efe2;
+    font-size: 10px; letter-spacing: .09em; text-transform: uppercase; text-decoration: none;
+  }
+  #p-video a:hover { background: #2c5250; }
+  #p-thumbs button, #lb-thumbs button {
+    width: 68px; height: 46px; padding: 0; border: 1px solid rgba(31,59,58,0.22); border-radius: 3px;
+    background: rgba(31,59,58,0.06); overflow: hidden; cursor: pointer; opacity: 0.55; transition: opacity 0.18s;
+  }
+  #lb-thumbs button { width: 60px; height: 40px; }
+  #p-thumbs button img, #lb-thumbs button img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #lb-thumbs button:hover, #p-thumbs button:hover { opacity: 0.85; }
+  #lb-thumbs button[aria-current="true"], #p-thumbs button[aria-current="true"] { opacity: 1; border-color: #1f3b3a; }
+  body.night #lb-thumbs button[aria-current="true"], body.night #p-thumbs button[aria-current="true"] { border-color: #f6efe2; }
+  #lb-frame.single img#lb-layer-a { display: block; }
+  #lb-frame.single #lb-empty { display: none; }
+
+  #lightbox {
+    position: fixed; inset: 0; z-index: 8; display: none;
+    padding: 4vh 4vw; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+    background: color-mix(in oklab, #efe9e1 90%, transparent);
+    backdrop-filter: blur(18px);
+  }
+  body.night #lightbox { background: color-mix(in oklab, #1a2a3e 90%, transparent); }
+  #lightbox.open { display: flex; }
+  #lb-frame {
+    position: relative; overflow: hidden; cursor: pointer; flex: 0 0 auto;
+    width: min(78vw, 1180px); height: min(64vh, 860px);
+    background: #fbf8f2; border: 1px solid rgba(31,59,58,0.18); border-radius: 4px;
+  }
+  #lb-frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: none; }
+  #lb-frame.layered img { display: block; }
+  #lb-frame.layered #lb-layer-b {
+    transform-origin: 100% 100%;
+    transition: transform 1000ms cubic-bezier(.32,.72,.2,1), filter 1000ms ease;
+    will-change: transform;
+  }
+  #lb-frame.layered.lifted #lb-layer-b {
+    transform: rotate(-13deg) translate(26%, -116%);
+    filter: drop-shadow(-10px 16px 22px rgba(31,59,58,0.24));
+    transition: transform 1000ms cubic-bezier(.32,.72,.2,1), filter 160ms ease-out;
+  }
+  #lb-frame:not(.layered) { cursor: default; background-image: repeating-linear-gradient(135deg, rgba(0,0,0,.06) 0 8px, transparent 8px 16px); }
+  #lb-frame.single { background-image: none; background: transparent; border-color: transparent; width: auto; height: auto; max-width: min(78vw, 1180px); max-height: min(56vh, 860px); }
+  #lb-frame.single img#lb-layer-a { position: static; width: auto; height: auto; max-width: min(78vw, 1180px); max-height: min(56vh, 860px); }
+  .lb-arrow {
+    position: fixed; top: 50%; transform: translateY(-50%); z-index: 3;
+    width: 44px; height: 44px; border-radius: 999px; cursor: pointer;
+    border: 1px solid rgba(31,59,58,0.18); background: rgba(251,248,242,0.92); color: #1f3b3a;
+    font-family: "JetBrains Mono", monospace; font-size: 15px; line-height: 1;
+    display: grid; place-items: center; opacity: .55; transition: opacity 160ms ease;
+  }
+  .lb-arrow:hover { opacity: 1; }
+  .lb-arrow:disabled { opacity: .18; cursor: default; }
+  #lb-prev { left: 3vw; }
+  #lb-next { right: 3vw; }
+  #lb-rail { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+  #lb-rail:empty { display: none; }
+  #lb-rail button {
+    font-family: "JetBrains Mono", monospace; font-size: 10px; letter-spacing: .08em;
+    text-transform: uppercase; padding: 6px 10px; border-radius: 999px;
+    border: 1px solid currentColor; background: transparent; color: inherit;
+    opacity: .45; cursor: pointer; transition: opacity 160ms ease, background 160ms ease;
+  }
+  #lb-rail button:hover { opacity: .85; }
+  #lb-rail button[aria-current="true"] { opacity: 1; background: #1f3b3a; color: #f6efe2; border-color: #1f3b3a; }
+  body.night #lb-rail button[aria-current="true"] { background: #f6efe2; color: #1f3b3a; border-color: #f6efe2; }
+  #lb-empty {
+    position: absolute; inset: 0; display: grid; place-items: center;
+    font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: .1em;
+    text-transform: uppercase; opacity: .5; color: #1f3b3a;
+  }
+  #lb-frame.layered #lb-empty { display: none; }
+  #lb-frame .lifthint {
+    position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%);
+    padding: 6px 11px; border-radius: 999px; background: #1f3b3a; color: #f6efe2;
+    opacity: 0; transition: opacity 220ms ease; pointer-events: none; white-space: nowrap;
+    font-size: 10px; letter-spacing: .09em; text-transform: uppercase;
+  }
+  #lb-frame.layered:hover .lifthint { opacity: 0.92; }
+  #lb-bar {
+    display: flex; align-items: flex-start; gap: 16px; color: inherit; flex: 0 1 auto;
+    width: min(78vw, 1180px); height: 20vh; max-height: 140px; overflow-y: auto; padding-right: 2px;
+  }
+  #lb-bar .mono { opacity: 0.6; }
+  #lb-bar #lb-caption {
+    font-family: inherit; font-size: 14px; line-height: 1.5; letter-spacing: 0;
+    text-transform: none; opacity: 1; max-width: 76ch; text-wrap: pretty; white-space: pre-line;
+  }
+  #lb-close {
+    position: fixed; top: 3vh; right: 3vw; z-index: 4;
+    font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: 0.08em;
+    text-transform: uppercase; cursor: pointer;
+    padding: 8px 13px; border-radius: 999px;
+    border: 1px solid currentColor; background: transparent; color: inherit;
+    opacity: 0.6; transition: opacity 200ms ease;
+  }
+  #lb-close:hover { opacity: 1; }
+
+  #panel .lifthint {
+    position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%);
+    display: none; padding: 5px 9px; border-radius: 999px;
+    background: #1f3b3a; color: #f6efe2; opacity: 0; transition: opacity 220ms ease;
+    pointer-events: none; white-space: nowrap;
+  }
+  #panel .shot.layered .lifthint { display: block; }
+  #panel .shot.layered:hover .lifthint { opacity: 0.92; }
+  #close {
+    position: absolute; top: 34px; right: 40px;
+    background: none; border: 0; cursor: pointer; color: inherit; opacity: 0.5;
+    font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  #close:hover { opacity: 1; }
+
+  #label {
+    position: fixed; z-index: 6; pointer-events: none; opacity: 0;
+    transform: translate(-50%, -140%); transition: opacity 160ms ease;
+    padding: 6px 10px; border-radius: 999px;
+    background: #1f3b3a; color: #f6efe2;
+    font-family: "JetBrains Mono", monospace; font-size: 10px; letter-spacing: 0.09em; text-transform: uppercase;
+  }
+  body.night #label { background: #e8eef5; color: #22334a; }
+
+  #loader {
+    position: fixed; inset: 0; z-index: 9; display: grid; place-items: center;
+    background: #eef7f2; transition: opacity 700ms ease;
+  }
+  #loader.gone { opacity: 0; pointer-events: none; }
+  body.night #loader { background: #1a2a3e; }
+  #lb-info { display: none; }
+  #puzzle { position: fixed; top: 28px; right: 32px; z-index: 3; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; transition: opacity 400ms ease; }
+  body:has(#panel.open) #puzzle { opacity: 0; pointer-events: none; }
+  #puzzle svg { display: block; overflow: visible; }
+  #puzzle .pz-count { opacity: 0.6; }
+  #puzzle path { transition: fill 600ms ease, fill-opacity 600ms ease, stroke-opacity 600ms ease; }
+  #puzzle path.new { animation: pz-pop 700ms ease; transform-box: fill-box; transform-origin: center; }
+  @keyframes pz-pop { 0% { transform: scale(1.35); } 100% { transform: scale(1); } }
+  @media (max-width: 760px) {
+    #puzzle { top: 22px; right: 16px; gap: 6px; }
+    #puzzle .pz-count { font-size: 9px; }
+    #hint { left: 0; right: 0; bottom: 22px; text-align: center; font-size: 11px; }
+    #controls { left: 0; right: 0; bottom: 50px; justify-content: center; flex-wrap: wrap; padding: 0 12px; }
+    #panel, #p-expand-tab { display: none !important; }
+    #lightbox { justify-content: flex-start; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 64px 16px 40px; }
+    #lb-frame { width: 92vw; height: 58vh; }
+    #lb-frame.single, #lb-frame.single img#lb-layer-a { max-width: 92vw; max-height: 58vh; }
+    #lb-thumbs, #lb-rail { max-width: 92vw; }
+    .lb-arrow { top: 36vh; }
+    #lb-prev { left: 6px; } #lb-next { right: 6px; }
+    #lb-info { display: block; width: 100%; max-width: 560px; margin-top: 8px; padding-top: 18px; border-top: 1px solid color-mix(in oklab, currentColor 18%, transparent); font-size: 14.5px; line-height: 1.6; text-wrap: pretty; }
+    #lbi-tag { opacity: 0.55; }
+    #lbi-title { font-size: 24px; margin: 6px 0 12px; font-weight: 600; }
+    #lbi-body p { margin: 0 0 12px; }
+    #lbi-credit { font-size: 13px; opacity: 0.75; display: flex; flex-direction: column; gap: 4px; margin-top: 14px; }
+    #lbi-credit a { color: inherit; }
+  }
+</style>
+</head>
+<body>
+<div id="scene"></div>
+
+<header>
+  <h1>Angelica Zhuang</h1>
+  <div class="mono">Dorm Room 132B — selected work</div>
+  <nav id="corner" class="mono">
+    <button type="button" id="index-btn" aria-expanded="false">Index</button>
+    <button type="button" id="about-btn" aria-expanded="false">About</button>
+    <a href="docs/angelica-zhuang-resume-2026.pdf" target="_blank" rel="noopener">Résumé</a>
+    <a href="https://www.linkedin.com/in/angelica-zhuang-7990911a8" target="_blank" rel="noopener">LinkedIn</a>
+    <a href="mailto:angelicaz@gmail.com">Email</a>
+  </nav>
+  <div id="about" hidden>
+    <p>I graduated from MIT in 2026 with a degree in architecture and minors in Entrepreneurship &amp; Innovation and Art, Culture, &amp; Technology.</p>
+    <p>Most of my work starts with people: the neighbors who shared a hill with my family, the teammates I biked across the country with, the students in the fabrication workshops I teach. I’m drawn to memory and nostalgia, and to the way a room or an object can hold them.</p>
+    <p>I like making things with my hands, and I move between drawing, models, film, photography and graphics, often within one project. This room is where all of it lives.</p>
+    <div class="mono" id="about-contact">
+      <a href="mailto:angelicaz@gmail.com">angelicaz@gmail.com</a>
+      <a href="tel:+14155165364">(415) 516-5364</a>
+    </div>
+  </div>
+</header>
+
+<div id="hint" class="mono">Drag to orbit · scroll to zoom · click objects</div>
+
+<div id="controls">
+  <button id="btn-view">Wall view</button>
+  <button id="btn-light" aria-pressed="false">Night</button>
+  <button id="btn-sound" aria-pressed="false">Ambience</button>
+</div>
+
+<aside id="panel">
+  <button id="close">Close</button>
+  <div class="mono tag" id="p-tag"></div>
+  <h2 id="p-title"></h2>
+  <div id="p-body"></div>
+  <div class="credit" id="p-credit"></div>
+  <div class="meta" id="p-meta"></div>
+  <div id="p-rail"></div>
+  <div class="shot" id="p-figure">
+    <img id="p-layer-a" alt="" />
+    <img id="p-layer-b" alt="" />
+    <span id="p-shot">image slot</span>
+    <span class="lifthint mono" id="p-lifthint">click to lift the layer</span>
+    <button class="expand mono" id="p-expand" title="Expand">Expand</button>
+    <div id="p-video"></div>
+  </div>
+  <p id="p-caption"></p>
+  <div id="p-thumbs"></div>
+</aside>
+<button class="mono" id="p-expand-tab" type="button" title="Expand" aria-label="Expand images">←</button>
+
+<div id="lightbox" aria-hidden="true">
+  <div id="lb-frame">
+    <img id="lb-layer-a" alt="" />
+    <img id="lb-layer-b" alt="" />
+    <span class="mono" id="lb-empty"></span>
+    <span class="lifthint mono" id="lb-lifthint"></span>
+    <div id="lb-video"></div>
+  </div>
+  <button id="lb-prev" class="lb-arrow" type="button" aria-label="Previous chapter">←</button>
+  <button id="lb-next" class="lb-arrow" type="button" aria-label="Next chapter">→</button>
+  <button class="mono" id="lb-close">Close</button>
+  <div id="lb-rail"></div>
+  <div id="lb-thumbs"></div>
+  <div id="lb-bar">
+    <span class="mono" id="lb-caption"></span>
+  </div>
+  <div id="lb-info">
+    <div class="mono" id="lbi-tag"></div>
+    <h2 id="lbi-title"></h2>
+    <div id="lbi-body"></div>
+    <div id="lbi-credit"></div>
+  </div>
+</div>
+
+<div id="index" aria-hidden="true">
+  <div id="ix-inner">
+    <div id="ix-top">
+      <h2>Index</h2>
+      <button class="mono" id="ix-close" type="button">Close</button>
+    </div>
+    <div id="ix-filters"></div>
+    <div id="ix-list" style="display:flex;flex-direction:column;gap:48px"></div>
+  </div>
+</div>
+
+<div id="label" class="mono"></div>
+<script>
+{ const b = document.getElementById('about-btn'), a = document.getElementById('about');
+  b.addEventListener('click', e => { e.stopPropagation(); const o = a.hidden; a.hidden = !o; b.setAttribute('aria-expanded', String(o)); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !a.hidden) { a.hidden = true; b.setAttribute('aria-expanded', 'false'); } }); }
+</script>
+<div id="loader" class="mono">Building the room…</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const PROJECTS = {
+  sketchbook: {
+    tag: 'Drawing · ongoing', title: 'Misc. sketching and drafting',
+    body: 'Sketches and drafts kept outside of finished projects including brainstorms on paper before anything goes into the computer, and still life studies from high school.',
+    meta: ['Drawing', 'Process'], shot: 'sketch scans',
+    chapters: [
+      { label: 'East Boston Brainstorms', shot: 'sketch pages', start: 5, imgs: [
+        { src: 'img/sk-eb-1.jpg', alt: 'Pencil sketch page of early site and massing ideas for the East Boston agriculture and education center', caption: 'Sketches and brainstorms for the East Boston Agriculture and Education Community, fall 2024.' },
+        { src: 'img/sk-eb-2.jpg', alt: 'Pencil sketch page of early site and massing ideas for the East Boston agriculture and education center', caption: 'East Boston brainstorm, page 2.' },
+        { src: 'img/sk-eb-3.jpg', alt: 'Pencil sketch page of early site and massing ideas for the East Boston agriculture and education center', caption: 'East Boston brainstorm, page 3.' },
+        { src: 'img/sk-eb-4.jpg', alt: 'Pencil sketch page of early site and massing ideas for the East Boston agriculture and education center', caption: 'East Boston brainstorm, page 4.' },
+        { src: 'img/sk-eb-5.jpg', alt: 'Pencil sketch page of early site and massing ideas for the East Boston agriculture and education center', caption: 'East Boston brainstorm, page 5.' },
+        { src: 'img/sk-eb-6.jpg', alt: 'Pencil sketch page of early site and massing ideas for the East Boston agriculture and education center', caption: 'East Boston brainstorm, page 6.' },
+        { src: 'img/sk-eb-7.jpg', alt: 'Pencil sketch page of early site and massing ideas for the East Boston agriculture and education center', caption: 'East Boston brainstorm, page 7.' },
+        { src: 'img/sk-eb-8.jpg', alt: 'Pencil sketch page of early site and massing ideas for the East Boston agriculture and education center', caption: 'East Boston brainstorm, page 8.' },
+        { src: 'img/sk-eb-9.jpg', alt: 'Pencil sketch page of early site and massing ideas for the East Boston agriculture and education center', caption: 'East Boston brainstorm, page 9.' }
+      ] },
+      { label: 'Still Life', shot: 'graphite drawings', imgs: [
+        { src: 'img/sk-sl-1.jpg', alt: 'Graphite still life drawing from high school', caption: 'Still life sketches from high school.' },
+        { src: 'img/sk-sl-2.jpg', alt: 'Graphite still life drawing from high school', caption: 'Still life 2.' },
+        { src: 'img/sk-sl-3.jpg', alt: 'Graphite still life drawing from high school', caption: 'Still life 3.' },
+        { src: 'img/sk-sl-6.jpg', alt: 'Graphite still life drawing from high school', caption: 'Still life 4.' },
+        { src: 'img/sk-sl-7.jpg', alt: 'Graphite still life drawing from high school', caption: 'Still life 5.' },
+        { src: 'img/sk-sl-9.jpg', alt: 'Graphite still life drawing from high school', caption: 'Still life 6.' },
+        { src: 'img/sk-sl-10.jpg', alt: 'Master copy drawing of Sunday Morning, Portugal', caption: 'Master copy of Sunday Morning, Portugal by Everett Raymond Kinstler.' },
+        { src: 'img/sk-sl-13.jpg', alt: 'Graphite still life drawing from high school', caption: 'Still life 8.' },
+        { src: 'img/sk-sl-14.jpg', alt: 'Graphite still life drawing from high school', caption: 'Still life 9.' }
+      ] }
+    ],
+    zoom: 3.2
+  },
+  zen: {
+    tag: 'Furniture · 2023', title: 'The Zen Cube',
+    body: 'The Zen Cube is a chair designed to optimize spacious comfort and serenity. The perforations are inspired by the patterns of traditional Japanese Zen gardens in which Buddhist monks would meditate.\n\nIt is designed to offer three modes of seating: upright, relaxed, and reclined. I chose to design it for assemly via mortise and tenon joints. In creating the mockup, I CNC milled each individual seating bar and the two square sides.',
+    credit: ['4.500 Design Computation', 'November – December 2023', 'Instructor: Larry Sass'],
+    meta: ['Furniture', 'CNC', 'Mortise and tenon'], shot: 'chair photo',
+    chapters: [
+      { label: 'Mockup', img: 'img/zen-chair-seated.png', alt: 'The finished Zen Cube chair in a studio, seated in by the designer', shot: 'chair photo', caption: 'CNC milled mockup, seated in the relaxed mode.' },
+      { label: 'Seating Modes', img: 'img/zen-drawings.png', alt: 'Line drawings of the chair in side and front view with figures seated in two different modes', shot: 'drawing set', caption: 'Side and front views of two of the three seating modes.' }
+    ],
+    zoom: 2.1
+  },
+
+  helix: {
+    tag: 'Research · 2023', title: 'The Living Knitwork Model',
+    body: 'I created a model of \u201cThe Living Knitwork,\u201d an art installation plan for Burning Man 2023. I 3D-modeled the inner structure using Rhinoceros and went through a few iterations to eventually print a large scale model. I sewed the petals around the structure to display in the Media Lab. Additionaly, I assisted in the construction of the final pavilion from sewing and ironing fabrics to drilling it all together.',
+    credit: ['MIT Media Lab: Responsive Environments Lab', 'June – August 2023', 'Supervisor: Irmandy Wicaksono'],
+    meta: ['Rhinoceros', '3D printing', 'Textiles'], shot: 'model photo',
+    chapters: [
+      { label: 'Media Lab', img: 'img/knitwork-medialab.png', alt: 'The knitwork model with blue patterned petals on a plywood base, displayed in the MIT Media Lab lobby', shot: '1:8 scale model', caption: '1:8 Scale Model in Media Lab Lobby.' },
+      { label: 'Petals', img: 'img/knitwork-figure.jpg', alt: 'Close view between two knitted petals of the model, with a printed human figure inside for scale', shot: '1:8 scale model', caption: '1:8 Scale Model Perspective Photo.' },
+      { label: 'Pavilion', img: 'img/knitwork-pavilion.jpg', alt: 'The full-scale Living Knitwork pavilion outdoors, knitted panels hanging from a timber frame', shot: '1:1 scale prototype', caption: '1:1 Scale Prototype.' }
+    ],
+    zoom: 3.0
+  },
+  plan: {
+    tag: 'Professional · 2024', title: 'New York Apartment Redesign',
+    body: 'I spearheaded this redesign project during a micro-internship at a firm in New York. To make the home more appealing, we added a third bedroom, re-designed the primary bedroom and kitchen layout for more storage and dynamism. This includes a custom, weaved shower wall and kitchen island. To explore this design further, I made a scale model of the apartment, furniture and all.',
+    credit: ['Threshold Office', 'January – February 2024', 'Supervisor: Lauren McClellan'],
+    meta: ['Architecture', 'Interiors', 'Model making'], shot: 'plan drawing',
+    chapters: [
+      { label: 'Plan', img: 'img/nya-plan.gif', alt: 'Animated plan of the redesigned apartment', shot: 'plan drawing', caption: 'The redesigned plan: a third bedroom, a reworked primary suite, and a new kitchen layout.' },
+      { label: 'Model', img: 'img/nya-model-aerial.png', alt: 'Aerial photograph of the white scale model of the apartment with plywood furniture', shot: '1:32 scale model', caption: '1:32 Scale Apartment Model.' },
+      { label: 'Living Space', img: 'img/nya-living.png', alt: 'Top-down photograph of the model living and dining space with the custom island', shot: '1:32 scale model', caption: 'Living and dining space, looking down on the custom island.' },
+      { label: 'Shower Wall', img: 'img/nya-shower.png', alt: 'Close photograph of the curved, weaved shower wall in the model', shot: '1:32 scale model', caption: 'The custom weaved shower wall.' }
+    ],
+    zoom: 3.0
+  },
+  closet: {
+    tag: 'Graphic Design · 2025', title: 'Cycling Team Jerseys',
+    body: 'Out of a general interest and love of fashion, I designed two kits for my cycling team.\n\nThe white jersey carries a tattoo sleeve: each tattoo is the state flower of a state we rode through, paired with the mileage we covered in it. The black jersey takes inspiration from Jaume Plensa\u2019s Alchemist, the sculpture of mathematical characters that sits at the center of campus, and features our mascot, the beaver — the engineer of nature.\n\nEvery flower, letter and the beaver were drawn by hand in Illustrator.',
+    credit: ['MIT Spokes', 'Manufactured by Jakroo: <a href="https://jakroo.com/designs?id=B1VCAqfR-g" target="_blank" rel="noopener">white kit</a> · <a href="https://jakroo.com/designs?id=SJbWru5z0-g" target="_blank" rel="noopener">black kit</a>'],
+    meta: ['Apparel', 'Illustrator', 'Hand drawing'], shot: 'jersey render',
+    chapters: [
+      { label: 'White Kit', shot: 'jersey render', imgs: [
+        { src: 'img/jersey-white-front-fit.png', alt: 'Front three-quarter render of the white long sleeve jersey with maroon MIT logo and flower tattoos down the sleeve', caption: 'White kit, front. Sunflower for Kansas, columbine for Colorado, sego lily for Utah, sagebrush for Nevada, and the California poppy at the cuff.' },
+        { src: 'img/jersey-white-back-fit.png', alt: 'Back three-quarter render of the white jersey showing the flower tattoos and mileage on the sleeve', caption: 'Each tattoo pairs a state flower with the mileage we rode in that state: Virginia 488.2 mi, Kentucky 433.7 mi, Illinois 138.8 mi.' },
+        { src: 'img/jersey-team-white.jpg', alt: 'Seven riders in the white jerseys lined up with their bikes in front of a red rock hillside', caption: 'The white kit on the road out west.' }
+      ] },
+      { label: 'Black Kit', shot: 'jersey render', imgs: [
+        { src: 'img/jersey-black-front-fit.png', alt: 'Front three-quarter render of the black jersey with maroon letterforms and a large beaver illustration', caption: 'Black kit, front. The beaver sits inside a field of hand-drawn characters lifted from Plensa\u2019s Alchemist.' },
+        { src: 'img/jersey-black-back-fit.png', alt: 'Back three-quarter render of the black jersey with letterform pattern across the pockets and collar', caption: 'Back of the black kit: the character pattern runs across the pockets, collar and sleeves.' },
+        { src: 'img/jersey-team-black.jpg', alt: 'Six riders in the black jerseys sitting on picnic benches in cycling kit and helmets', caption: 'The black kit, mid-ride.' }
+      ] }
+    ],
+    zoom: 1.9
+  },
+  monitor: {
+    tag: 'Studio project · 2024', title: 'The Grid 0.0',
+    body: 'The Grid 1.0 is a communal home whose design is sourced from a housing development catalog.\n\nTwo 3x3 grids, one for a family and one for individuals, share a single kitchen and dining floor above, and each can be customized with plug-in programs and facades. As more homes are added, their living areas line up into one continuous axis, so the community keeps growing one grid at a time.',
+    credit: ['4.024 Architecture Design Studio II', 'March \u2013 May 2024', 'Instructor: Rosalyne Shieh'],
+    meta: ['Architecture', 'Housing', 'Studio'], shot: 'drawings',
+    chapters: [
+      { label: 'The Catalog', shot: 'catalog pages', imgs: [
+        { src: 'img/grid-floor-plans.png', alt: 'Floor plans of grid 0.1 and grid 0.2, the two customizable 3x3 units', caption: 'The grid 0.1 and grid 0.2 customizable floor plans.\n\nEach home is defined by two 3x3 grid-like forms. The first, grid 0.1, is a family-home with one primary bedroom and one secondary bedroom. The second, grid 0.2, is a home for individuals with three or more bedrooms and one shared bathroom. In each grid, the living area corresponds to the open areas of the house and lies along a singular horizontal axis.' },
+        { src: 'img/grid-plugins-massing.png', alt: 'Nine plug-in program plans beside four massing, kitchen and dining types labelled A to D', caption: 'Additional plug-in programs, and massing, kitchen, and dining types.\n\nThe catalog offers variation and customization to fit the specific needs and requests of any group.' },
+        { src: 'img/grid-site-plan.png', alt: 'Site plan of the grid 1.0 house among contour lines and trees', caption: 'The grid 1.0, full customized house site plan.\n\nThe consistency of these grids allows for the community to easily expand as necessary. As more grid homes are added to a site, they align the living areas to extend the central axis of traversal.' }
+      ] },
+      { label: 'Grid 1.0', shot: 'plans and model', imgs: [
+        { src: 'img/grid-first-floor.png', alt: 'First floor plan of Grid 1.0 across both grids with the firepit, library and sun room plug-ins', caption: 'First Floor Plans of Grid 1.0\n\nGrid 1.0 is a home designed for me and my friends. From the catalog, I chose to expand grid 0.1 by adding plug-in 1, the outdoor firepit, and plug-in 7, the library and reading nook. To grid 0.2, I added plug-in 2, the sun room, and an extra bedroom.' },
+        { src: 'img/grid-second-floor.png', alt: 'Second floor plan of Grid 1.0, one long rectangle holding the shared kitchen and dining space', caption: 'Second Floor Plans of Grid 1.0\n\nThe second floor is one long rectangle that stretches across both grids and inhabits the shared kitchen and dining space.' },
+        { src: 'img/grid-model-top.png', alt: 'Top-down view of the Rockite model showing the two 3x3 grids of cast blocks on a contoured site', caption: 'Rockite Model of Grid 1.0\n\nOver time, Grid 2.0, 3.0, 4.0, etc. will be added, each with different plug-ins and facades. The result of this is the domestic revolution.' }
+      ] },
+      { label: 'Model', shot: 'physical model', imgs: [
+        { src: 'img/grid-model-angle.png', alt: 'Physical model with cast concrete blocks, a slatted wood roof and small trees on a contoured site', caption: 'Site model with facade A. I chose facade A from page 3 of the catalog.' }
+      ] }
+    ],
+    zoom: 2.6
+  },
+  towers: {
+    tag: 'Studio project · 2024', title: 'East Boston Agriculture and Education Community',
+    body: 'This semester-long studio project was centered around creating a proposal for a community supported agriculture and education center to address food insecurity issues of the East Boston neighborhood. Our 27,000 GSF structure includes a farm, greenhouse, community market, and various conditioned public and production spaces such as test kitchens for teaching, restaurant incubators, cafes, event spaces, and more. Our final proposal focuses on bringing in the community to help grow horticulture throughout our greenhouses to cycle through our kitchen and markets in a reciprocal process of cultivation and regeneration.',
+    credit: ['4.153 Architecture Design Core Studio III', 'October – December 2024', 'In collaboration with Katrina Chan and Yihong Chen', 'Instructor: Yolande Daniels and Ekin Bilal'],
+    meta: ['Architecture', 'Studio', 'Collaboration'], shot: 'renderings',
+    chapters: [
+      {
+        label: 'Site Study',
+        img: 'img/eb-site-vignettes.png',
+        alt: 'Grid of illustrated site vignettes showing the East Boston waterfront across times of day and seasons',
+        shot: 'site vignettes',
+        caption: 'During the initial site studies we wanted to highlight three different aspects of the environment: the objective, subjective, and projective perspectives of our site. These vignettes, made using Illustrator, serve as snapshorts of our subjective perspective.\n\nThe objective perspective came from analyzing and making site maps of pedestrian and bike routes.\n\nThe subjective perspective are these vignettes of different scenes, at different times of day, and through the different seasons of the year to visually describe how it might feel to be there. From top to bottom is sunrise and early morning, mid-day and afternoon, to sunset and late evening. The right-most vignettes are the four seasons, summer, fall, winter, spring.\n\nFinally, for the projective perspective, we were inspired by the boats throughout the site. We wanted to use decommissioned boat parts such as the interior steel skeleton as structural elements and the metal cladding for finishing. Additionally, with our site being on the water we learned that in 50 years it would be entirely flooded. From this, we wanted to design our community so that the greenhouse gardens were the top-most spaces so that they were furthest from the water and could illuminate the skyline similar to a lighthouse.'
+      },
+      {
+        label: 'Eight Buildings',
+        img: 'img/eb-facade-matrix.jpg',
+        alt: 'Facade matrix drawing: elevations of each building beside exploded axonometrics of their steel frames',
+        shot: 'facade matrix',
+        caption: 'Our community consists of 8 distinct buildings with various programming. From the furthest inland to the shore, we have a the welcome center, conference, and auditorium building, our collective work building, our indoor market building, our admin building, our education building, our dry food storage and packaging building, our test kitchen and restaurant kitchen building, and finally our restaurant and cafe building. Each building also has unique forms informed by lines of site between our buildings and structurally supported by the steel frames from decommissioned boats. On the top of each building is a greenhouse level for growing horticulture including legume, root, fruit, and leaf crops.'
+      },
+      {
+        label: 'Section',
+        img: 'img/eb-silo-section.png',
+        alt: 'Silo perspective section at 1 inch to 16 feet, cutting through three storeys and the greenhouse level, with a greenhouse connection detail and materials key',
+        shot: 'perspective section',
+        caption: 'Silo Perspective Section, drawn at 1\u2019 = 1/16\u201d with a greenhouse connection detail.\n\nIn addition to boat parts being used for the structural cut-outs of each building, we also wanted to feature them in the smaller structural details of the interior such as the archways under staircases. In terms of the materiality, the primary structure is made from the steel boat skeleton, after that thermal insulation, then finally either glazing for windows on the lower stories, or corrugated polycarbonate on the greenhouse level. For the facade of the building excluding the greenhouse level, steel joints stick out from the glazing or non glazing walls to hold the upcycled steel pieces of boat skins. Layered and spaced in an organic pattern allows light to seep into the building in unique ways.'
+      },
+      {
+        label: 'Structural Model',
+        img: 'img/eb-detail-model.jpg',
+        alt: 'Sectional detail model in wood and wire showing the steel frame, floor plates and layered boat-skin cladding',
+        shot: 'detail model',
+        caption: 'Structural Model.'
+      },
+      {
+        label: 'Site Model',
+        img: 'img/eb-site-model.jpg',
+        alt: 'Site model with eight cast acrylic massing volumes on a white base',
+        shot: 'site massing model',
+        caption: ''
+      },
+      { label: 'Renders', shot: 'renderings', imgs: [
+        { src: "img/eb-test-kitchen.png", alt: "Rendering of the test kitchen interior, counters and shelving under a curved copper ceiling with a long window to the harbour", caption: "Test Kitchen Rendering." },
+        { src: "img/eb-greenhouse.jpg", alt: "Rendering of the greenhouse level at sunset, planting beds behind glazing with the Boston skyline and harbour beyond", caption: "Greenhouse Rendering." },
+        { src: "img/eb-campus-quad.jpg", alt: "Rendering of the campus quad between the buildings, people walking and biking past steel-clad facades", caption: "Campus Quad Rendering." }
+      ] }
+    ],
+    zoom: 3.1
+  },
+  bike: {
+    tag: 'MIT Spokes · January – August 2026', title: 'MIT Spokes',
+    body: 'This summer I was on a team of 7 MIT students who biked 4,000 miles across the country. Our mission was to share our knowledge and passion for STEAM to underserved communities across the United States.\n\nRiding from D.C. to San Francisco with six near-strangers was the most important and impactful thing I have done, and I documented the journey through video logs.',
+    credit: ['<a href="https://mitspokes.com/" target="_blank" rel="noopener">mitspokes.com</a>', 'President', 'Led a team to raise $50,000 for a cross-country cycling initiative delivering STEM education to underserved communities', 'Designed and taught hands-on workshops introducing K–12 students and incarcerated youth to 3D fabrication and architectural design'],
+    meta: ['4,000 miles', '75 days', 'STEM outreach'],
+    shot: 'MIT Spokes video logs',
+    chapters: [
+      { label: 'Day ∞', shot: 'MIT Spokes team video', video: 'EChE8CpWCWU', caption: 'The MIT Spokes 2026 team video.' },
+      { label: 'Day 55', shot: 'video log', video: 'gB8CHmhKH4o', caption: 'Day 55.' },
+      { label: 'Day 63', shot: 'video log', video: 'Rf2ekU6-Io4', caption: 'Day 63.' },
+      { label: 'Day 70', shot: 'video log', video: '7Wud14ELlAg', caption: 'Day 70.' }
+    ],
+    zoom: 2.0
+  },
+  posterA: {
+    tag: 'Drawing · 2024', title: 'The Dust Bunnies of my Triple',
+    body: 'A series of fragmented illustrations capturing the intimate corners of my dorm room, shared with my two best friends for two years of college. Through contrasts between its lived-in warmth and its empty, transitional states, the work reflects on how this space—like many before and after us—holds traces of friendship, memory, and continuity across generations of occupants.',
+    credit: ['4.s02 Chasing Dust Bunnies: Architectural Illustration in Fragments', 'January – February 2024', 'Instructor: Ekin Bilal'],
+    meta: ['Illustration', 'Architecture'], shot: 'illustration series',
+    layers: ['img/dustbunnies-empty.png', 'img/dustbunnies-lived.png'],
+    layerAlt: ['The same fragments drawn empty and transitional', 'Fragments of the room as it was lived in'],
+    liftHint: 'click to peel back the lived-in layer',
+    off: [0.2, 0.1, 2.4]
+  },
+  posterB: {
+    tag: 'Studio project · 2023', title: 'The Story of the Spring Roll',
+    body: 'A spring roll is assembled, not cooked alone. In studying the Pork & Napa Cabbage Spring Rolls, I discovered that the folding process is what makes this dish so loved. It brings communities together during Chinese New Year, offering everyone a chance to be involved. To accompany this discovery, I designed a mulifunctional, portable surface to fold and bake the spring rolls on. I then designed the larger space and restaurant for these activities to take place.',
+    credit: ['4.023 Architecture Design Studio I', 'October – December 2023', 'Instructor: Latifa Alkhayat'],
+    meta: ['Architecture', 'Studio'], shot: 'site observation drawing',
+    chapters: [
+      { label: "Process", img: "img/springroll-2-process.png", alt: "Drawing of the eight folding steps of the pork and napa cabbage spring roll, ringed by a calendar of when each ingredient is grown and harvested", shot: "process drawing", caption: "The Process of Making the Pork and Napa Cabbage Spring Roll." },
+      { label: "Surface", shot: "folding surface", imgs: [
+        { src: "img/springroll-surface-drawing.png", alt: "Drawing of the folding sequence of the spring roll surface at 1:5", caption: "Inspired by the origami nature of the spring rolls, I designed a folding surface to use in the process of making them. A 2’ by 2’ square that can fold inward and outward into either a table or a baking tray. Designed for portability to facilitate collaboration and community, anyone can take these surfaces throughout the restaurant space to fold their own spring rolls." },
+        { src: "img/springroll-3-folding-surface.png", alt: "Render of the folding surface, a two foot square that folds into either a table or a baking tray", caption: "Render of the Pork and Napa Cabbage Spring Roll Folding Surface." }
+      ] },
+      { label: "Restaurant", img: "img/springroll-restaurant-sections.png", alt: "Sections and elevations of the spring roll restaurant at 1:100", shot: "sections and elevations", caption: "My spring roll kitchen revolves around the idea of being just as simplistic yet powerfully uniting. The buildings are modest and flat in materiality to suggest they themselves were folded from a sheet of paper. They act as a shell for the people and the activities that can happen. As it gets closer to winter and as the water level of the Charles River decreases, more floating slabs of deck are revealed for more people to come celebrate Chinese New Year. Without the people, activities, and traditions, the buildings are empty shells. The filling of these spaces is what brings people together and what brings the building to life." },
+      { label: "Renders", shot: "restaurant renders", imgs: [
+        { src: "img/springroll-4-restaurant-render.png", alt: "Render of the spring roll restaurant entrance, two figures walking through large folding doors toward the Charles River", caption: "This restaurant begins at an almost invisible deck that takes passersby onto the water itself. As you walk through the large folding doors of the entrance, a picture perfect view of the Charles River is presented." },
+        { src: "img/springroll-restaurant-render-2.jpg", alt: "Render of the floating deck outside the restaurant, people walking past folded walls and sitting at the water’s edge", caption: "As you travel deeper through folds and along this floating deck, an even greater view is revealed with large steps that ascend far into the water." },
+        { src: "img/springroll-restaurant-render-3.jpg", alt: "Render inside the restaurant, an opening in the deck revealing the water below and a folded door opening to the river", caption: "Inside, openings cut through the deck bring the water into the room, and the folding doors frame the river beyond." }
+      ] },
+      { label: "Site", img: "img/springroll-1-site-ducks.png", alt: "Site observation drawing of mallards moving around the Charles River esplanade", shot: "mallards site observation drawing", caption: "Many people, animals, and things are brought together because of the river. People walk, run, and bike through the area via the Harvard Bridge or the little ramps that extend from Back St, Boston. Similar to my spring rolls, the esplanade is a place that brings things together. Here is a site analysis drawing made from observing the mallards move around the site." },
+      { label: "Model", shot: "1:100 scale model", imgs: [
+        { src: "img/springroll-model-1.png", alt: "1:100 model at eye level, the volumes reflected in the black river surface", caption: "1:100 Scale Restaurant Model." },
+        { src: "img/springroll-model-2.jpg", alt: "1:100 model seen from the front, white paper volumes on the black river surface", caption: "1:100 Scale Restaurant Model." }
+      ] }
+    ],
+    off: [0.15, 0.1, 2.2]
+  },
+  posterC: {
+    tag: 'Studio project · 2023', title: 'Simmons Study',
+    body: 'In designing a method to create souvenirs of Simmons, I conducted studies on its patterned facade and replicated the same tilt-up construction process of the actual building. Through many method tests, I found the limits of silicone and rockite\u2019s material fragility to create as intricate a model as possible.',
+    credit: ['4.022 Design Studio: Introduction to Design Techniques and Technologies', 'March \u2013 May 2023', 'Instructors: Carrie Norman and Zhicheng Xu'],
+    meta: ['Architecture', 'Studio', 'Fabrication'], shot: 'facade study',
+    chapters: [
+      {
+        label: 'Facade Study',
+        shot: 'chipboard and spray paint',
+        imgs: [
+          { src: 'img/simmons-facade-1.png', alt: 'Laser-etched chipboard tile of the Simmons facade weave pattern' },
+          { src: 'img/simmons-facade-2.png', alt: 'Spray paint print of the facade weave pattern on paper' },
+          { src: 'img/simmons-facade-3.png', alt: 'Second laser-etched chipboard tile, horizontal weave variation' },
+          { src: 'img/simmons-facade-4.png', alt: 'Second spray paint print of the weave pattern on paper' }
+        ],
+        caption: 'Simmons Facade Study with Chipboard and Spray Paint on Paper'
+      },
+      {
+        label: 'Powder Print',
+        img: 'img/simmons-print.jpg',
+        alt: 'White powder-printed model of Simmons, the full perforated facade seen straight on',
+        shot: 'powder print model',
+        caption: 'Simmons Powder Print Model'
+      },
+      {
+        label: 'Casting Prototype',
+        img: 'img/simmons-mold.jpg',
+        alt: 'Blue silicone mould between the cut pattern and the rockite cast pulled from it',
+        shot: 'rockite casting prototype',
+        caption: 'Simmons Rockite Casting Prototype'
+      },
+      {
+        label: 'Souvenirs',
+        shot: 'rockite casts',
+        imgs: [
+          { src: 'img/simmons-souvenir-front.jpg', alt: 'Rockite souvenir cast with the woven surface pattern, seen from the front' },
+          { src: 'img/simmons-souvenir-b.jpg', alt: 'Second rockite souvenir cast with the perforated facade, seen from the front' },
+          { src: 'img/simmons-souvenir-angle.png', alt: 'Close view of the rockite cast, the etched weave and square openings at the corner' }
+        ],
+        caption: 'Simmons Rockite Casted Souvenirs'
+      }
+    ],
+    off: [0.2, 0.1, 2.3]
+  },
+  film: {
+    tag: 'Film \u00b7 ongoing', title: 'Short Film Video Projects',
+    body: 'While getting my minor in Art, Culture, and Technology at MIT, I took a couple of videography electives, 4.354 Introduction to Video and Related Media and 4.352 Advanced Video and Related Media. Across the exercises and projects in them I found my love for video, and my own style and voice. *My Friend, Ria* and *My People* are examples of that work: shot on a camcorder I carried around day to day, seeing what I could capture of the things closest to me, trying to convey my most authentic self and experiences.',
+    credit: ['4.354 Introduction to Video and Related Media', '4.352 Advanced Video and Related Media', 'Edited in Premiere Pro'],
+    meta: ['Premiere Pro', 'Editing', 'Film'], shot: 'short film',
+    chapters: [
+      { label: 'Life Along the Charles', shot: 'short film', video: 'M-8pe1NUzXE', caption: 'Silent short film made in class 4.354 Introduction to Video and Related Media to study composition.' },
+      { label: 'Sounds of the City', shot: 'short film', video: 'oBMYjjvn8LE', caption: 'Short film made as an assignment for 4.354 Introduction to Video and Related Media to study sound recording and asynchronous editing.' },
+      { label: 'My Friend, Ria', shot: 'short film', video: 'zgspwiESqfg', caption: 'Short film final for 4.354 Introduction to Video and Related Media.' },
+      { label: 'My People', shot: 'short film', imgs: [
+        { video: 'wglDD-5QN48', src: 'https://img.youtube.com/vi/wglDD-5QN48/mqdefault.jpg', alt: 'My People, single channel', caption: '4.352 final project, a self documentary.' },
+        { video: 'HjcJUZ9Jv9M', src: 'https://img.youtube.com/vi/HjcJUZ9Jv9M/mqdefault.jpg', alt: 'My People, multichannel version', caption: 'A multichannel version of My People.' }
+      ], caption: '4.352 final project, a self documentary.' }
+    ],
+    zoom: 3.0
+  },
+  camera: {
+    tag: 'Photography · ongoing', title: 'Photography Projects',
+    body: 'I have been taking pictures since I was six, when my dad handed me his camera and showed me how to hold it steady, where to put my eye, and what the dials did. Most of what I shot then was out of focus, but the habit stuck. Photography has followed me through every stage since: family trips, school, moving to a new city, the people I have met along the way. The projects below are the ones I keep coming back to.',
+    meta: ['Film', 'Digital', 'Documentary'], shot: 'select edits',
+    chapters: [
+      { label: 'Memories', shot: 'long exposures', imgs: [
+        { src: 'img/mem-1.jpg', alt: 'Park lawn with people sitting and running, the whole frame streaked by camera motion', caption: 'Memories. Final digital project for 4.341 Introduction to Photography and Related Media (February \u2013 May 2025), about nostalgia and whether the feeling of remembering something can be photographed. Every frame is a long exposure.' },
+        { src: 'img/mem-2.jpg', alt: 'Bicycle riders and walkers on a park path pulled into motion streaks', caption: 'The path, moving.' },
+        { src: 'img/mem-3.jpg', alt: 'Sunlit lawn with picnickers, foliage smeared by a long exposure', caption: 'An afternoon in the park, held open too long.' },
+        { src: 'img/mem-4.jpg', alt: 'People walking and a stroller passing a flowering garden, blurred by movement', caption: 'Passing the lilacs.' },
+        { src: 'img/mem-5.jpg', alt: 'Night scene under a lit tree, a figure seated on a bench while others blur past', caption: 'Waiting under the tree.' },
+        { src: 'img/mem-6.jpg', alt: 'Person walking a bicycle along a lit path at night beside willow trees', caption: 'Walking the bike home.' },
+        { src: 'img/mem-7.jpg', alt: 'Figure on a bench facing a lit fountain and the city skyline at night, light sources flared into stars', caption: 'The fountain at the esplanade.' },
+        { src: 'img/mem-8.jpg', alt: 'Red Line train at a station platform with passengers blurred in motion', caption: 'The train pulling in.' }
+      ] },
+      { label: 'Singapore & Shanghai', shot: 'black and white film', imgs: [
+        { src: 'img/sg-gardens.jpg', alt: 'People walking and posing for photos by a fountain, Supertrees behind', caption: 'Singapore and Shanghai, August 2025. Ilford HP5 Plus. Gardens by the Bay.' },
+        { src: 'img/sg-artscience.jpg', alt: 'Abstract view of the curved white petals of the ArtScience Museum against a blank sky', caption: 'ArtScience Museum, looking up.' },
+        { src: 'img/sg-cyclists.jpg', alt: 'Two cyclists riding across the promenade with the Singapore skyline behind', caption: 'Along the promenade at Marina Bay.' },
+        { src: 'img/sg-escalator.jpg', alt: 'A woman on an escalator under a long curved glass vault inside a mall', caption: 'Under the vault.' },
+        { src: 'img/sg-mbs-day.jpg', alt: 'Marina Bay Sands seen from below in daylight, the boat-shaped roof cantilevered overhead', caption: 'Marina Bay Sands, daylight.' },
+        { src: 'img/sg-flyer.jpg', alt: 'The Singapore Flyer across the water beyond an empty elevated road', caption: 'The Flyer from the empty expressway.' },
+        { src: 'img/sg-helix.jpg', alt: 'Skyline seen through the cables of the Helix Bridge with the ArtScience Museum at right', caption: 'Through the cables of the Helix Bridge.' },
+        { src: 'img/sg-mbs-night.jpg', alt: 'Marina Bay Sands at night, lit windows across the towers', caption: 'The same towers after dark.' },
+        { src: 'img/sg-mbs-night2.jpg', alt: 'Close view of the two lit towers and the cantilevered roof at night', caption: 'Closer, with the roof overhead.' },
+        { src: 'img/sg-mall.jpg', alt: 'Interior of a multi-level luxury mall at night seen from above', caption: 'The mall, looking down.' },
+        { src: 'img/sg-jewel.jpg', alt: 'Mirrored sculpture beside an indoor garden under a gridshell roof at Jewel Changi', caption: 'Jewel Changi, before the flight.' },
+        { src: 'img/sh-crossing.jpg', alt: 'A traffic officer standing in a crosswalk as a car passes at dusk in Shanghai', caption: 'Shanghai, dusk on Huaihai Road.' },
+        { src: 'img/sh-bund-pointing.jpg', alt: 'A child on someone\u2019s shoulders pointing at the lit Pudong skyline above a crowd', caption: 'The Bund, pointing at Pudong.' },
+        { src: 'img/sh-bund-crowd.jpg', alt: 'Crowd along the Bund holding phones up, a child seated on shoulders among them', caption: 'Everyone photographing the same skyline.' },
+        { src: 'img/sh-lotus.jpg', alt: 'Lotus pond in the rain with a single figure under an umbrella at the far edge', caption: 'A lotus pond in the rain.' }
+      ] },
+      { label: 'Berlin & Amsterdam', shot: 'color film', imgs: [
+        { src: 'img/eu-bookshop.jpg', alt: 'Two people browsing in a bookshop with tall shelves and a garden visible through the window', caption: 'Berlin and Amsterdam, July 2025. Kodak Gold 200, 28mm.' },
+        { src: 'img/eu-gulls.jpg', alt: 'Gulls in flight over a brick square with pigeons, bicycles and museum buildings behind', caption: 'Museumplein, Amsterdam.' },
+        { src: 'img/eu-park.jpg', alt: 'Two people walking away down a tree-shaded path in a park', caption: 'Walking out of the park.' },
+        { src: 'img/eu-courtyard-cafe.jpg', alt: 'Courtyard café with green metal chairs under a large tree and a red bicycle', caption: 'Courtyard café, Berlin.' },
+        { src: 'img/eu-doorway.jpg', alt: 'Dark tiled hallway looking through open doors onto a sunlit courtyard with seated people', caption: 'Through the hallway into the courtyard.' },
+        { src: 'img/eu-ivy.jpg', alt: 'Ivy-covered rear facade and balcony seen past the curve of an archway', caption: 'Back building, seen from under the arch.' },
+        { src: 'img/eu-archway.jpg', alt: 'Cobbled passage under an arch with a sign reading Zur Oranienburger Str.', caption: 'Zur Oranienburger Straße.' },
+        { src: 'img/eu-cyclist.jpg', alt: 'Cyclist with a large backpack passing a tram stop, park and trees behind', caption: 'Passing the tram stop.' }
+      ] },
+      { label: 'Arles & Paris', shot: 'color film', imgs: [
+        { src: 'img/fr-arles-night2.jpg', alt: 'Empty street corner at night in Arles, a lit shopfront strung with holiday lights', caption: 'Arles and Paris, January 2026. An empty corner after dark.' },
+        { src: 'img/fr-reeds.jpg', alt: 'Tall reeds against a deep blue sky', caption: 'Reeds in the Camargue.' },
+        { src: 'img/fr-cabane.jpg', alt: 'Whitewashed thatched cabane and a wooden shelter on flat scrubland', caption: 'A cabane on the salt flats.' },
+        { src: 'img/fr-picnic.jpg', alt: 'Picnic table under a timber shelter looking out over fenced marshland', caption: 'Out of the wind.' },
+        { src: 'img/fr-path.jpg', alt: 'Grass track running between bare winter trees and hedgerow', caption: 'The track back.' },
+        { src: 'img/fr-louvre.jpg', alt: 'Tourists posing and photographing each other on blocks in front of the Louvre', caption: 'Everyone taking the same picture at the Louvre.' },
+        { src: 'img/fr-boucherie.jpg', alt: 'A cyclist passing a lit boucherie at dusk, two people talking at the window', caption: 'Chez Mère Grand, early evening.' }
+      ] },
+      { label: 'New York', shot: 'color film', imgs: [
+        { src: 'img/nyc-ginkgo.jpg', alt: 'Produce stacked in boxes on a Chinatown sidewalk under a yellow ginkgo tree', caption: 'New York, October 2025. Chinatown under the ginkgos.' },
+        { src: 'img/nyc-crossing.jpg', alt: 'Two older people holding hands crossing a Chinatown intersection, shopfront signs down the block', caption: 'Crossing East Broadway.' },
+        { src: 'img/nyc-wallst.jpg', alt: 'Men in suits shaking hands on the corner outside the New York Stock Exchange', caption: 'Corner of Wall and New.' }
+      ] },
+      { label: 'Panama', shot: 'color film', imgs: [
+        { src: 'img/pan-balcony-parents.jpg', alt: 'Two people seated at a small table on a balcony over the water, city skyline across the bay', caption: 'Panama, December 2025. Breakfast on the balcony.' },
+        { src: 'img/pan-parents.png', alt: 'My parents standing among a seated crowd on bleacher steps in the sun', caption: 'My parents, waiting for the ships.' },
+        { src: 'img/pan-cathedral.jpg', alt: 'Stone and white cathedral facade in Casco Viejo seen from below against a pale sky', caption: 'The cathedral in Casco Viejo.' },
+        { src: 'img/pan-balcony.jpg', alt: 'A person standing with their back to the camera on a balcony looking at tiled rooftops and palms', caption: 'Looking out over the rooftops.' }
+      ] },
+      { label: 'First Film Roll', shot: 'film scans', imgs: [
+        { src: 'img/film-bridge.png', alt: 'Two people walking toward the camera under the Brooklyn Bridge tower with snow along the path', caption: 'My first roll of film, shot for 4.341 Introduction to Photography and Related Media (February – May 2025), where I learned to shoot, develop and print in the darkroom. Brooklyn Bridge, DUMBO.' },
+        { src: 'img/film-arch.png', alt: 'A person walking a dog through a sunlit archway under the bridge, Manhattan skyline beyond', caption: 'Under the arch at Water Street.' },
+        { src: 'img/film-canyon.png', alt: 'Street corner with graffitied wall in shadow and midtown towers in sunlight down the avenue', caption: 'Looking uptown from a corner in shadow.' },
+        { src: 'img/film-subway.png', alt: 'A woman reading a book beside a child with a lollipop on a subway bench', caption: 'Reading on the train.' },
+        { src: 'img/film-bookstore.png', alt: 'Interior of a crowded secondhand bookstore with hanging lamps and a bookseller at the desk', caption: 'Inside the bookstore, wide open at a slow shutter.' },
+        { src: 'img/film-dusk.png', alt: 'Taxi waiting at dusk on a wet avenue with bare trees and headlights receding', caption: 'Dusk, pushed in development.' },
+        { src: 'img/roll-darkroom-a.png', alt: 'Contact sheets and work prints laid out on a dark pinboard', caption: 'Contact sheets and work prints from the roll.' },
+        { src: 'img/roll-darkroom-b.png', alt: 'Prints and negative strips pinned to a board in the darkroom', caption: 'Learning to read the negatives and time each print.' }
+      ] }
+
+    ],
+    zoom: 3.0
+  },
+  house: {
+    tag: 'Studio project · 2024', title: 'Side by Side',
+    body: 'This project was about re-living and re-creating my childhood home from memory. Without using online or photo references, I tried my best to envision the fuzzy images of my living room, my bedroom, and the backyard to eventually draw plans plans of not only my home but my next door neighbors home too. It was a story about two families becoming close friends and spending every day togeteher. So now, when I think about my childhood home, I think of both of them',
+    credit: ['4.024 Architecture Design Studio II', 'February – March 2024', 'Instructor: Rosalyne Shieh'],
+    meta: ['Architecture', 'Studio', 'Drawing'], shot: 'model photo',
+    chapters: [
+      { label: "Plan", img: "img/sbs-crop5b.png", alt: "Hand-drawn plan of the two houses and their shared yard, drawn from memory", shot: "plan drawing", caption: "204 Lyndhurst Avenue was the first home my parents owned in the U.S. and the first place I can vividly remember living in. It sat at the top of a little hill overlooking the city of Belmont. There are a number of reasons it’s so special, but most of all it’s because of our next door neighbors, the Yoshidas.\n\nCoincidentally, we moved right next door to one of my pre-school classmates. His name was Kai and we became best friends. We lived next to each other for over 5 years and were raised by both of our families. His older sister was my greatest role model and my younger sister was like Kai’s own little sibling.\n\nEvery day, we carpooled to and from school. After school and on weekends, we just walked a few feet, climbed the dividing fence, or used our “secret passageway” to hang out more. It was like our two houses were one big combined mansion. It was the best childhood I could have wished for.\n\nMy family decided to move away in 4th grade. When we told Kai’s family, we all cried together. It’s been a while since I lived at 204 Lyndhurst Avenue so my memories are more faint. I don’t remember much of the neighbors or landscape, I only remember me and Kai’s families’ conjoined life at the top of our little hill." },
+      { label: "Elevations", shot: "elevation drawings", imgs: [
+        { src: "img/sbs-crop3b.png", alt: "Hand-drawn elevation of both houses with trees along the street", caption: "Drawn entirely by hand, the way I remember it: a little crooked, a little out of scale, the way a child would draw home." },
+        { src: "img/sbs-crop4b.png", alt: "Second hand-drawn elevation of the two houses", caption: "Drawn entirely by hand, the way I remember it: a little crooked, a little out of scale, the way a child would draw home." }
+      ] },
+      { label: "Sections", shot: "section drawings", imgs: [
+        { src: "img/sbs-crop1c.png", alt: "Hand-drawn section through the house and sloped yard at 1:100", caption: "Drawn entirely by hand, the way I remember it: a little crooked, a little out of scale, the way a child would draw home." },
+        { src: "img/sbs-crop2b.png", alt: "Second hand-drawn section cutting through the house and terrain", caption: "Drawn entirely by hand, the way I remember it: a little crooked, a little out of scale, the way a child would draw home." }
+      ] },
+      { label: "Model", shot: "1:100 scale model", imgs: [
+        { src: "img/sbs-model-front.jpg", alt: "Red paper model of the two houses side by side on a white contour base", caption: "1:100 Scale Model." },
+        { src: "img/sbs-model-aerial.jpg", alt: "Angled view of the red paper model showing both houses, decks and trees on the contoured site", caption: "1:100 Scale Model." }
+      ] }
+    ],
+    off: [0.75, 0.35, 1.15]
+  },
+  lantern: {
+    tag: 'Design history · 2025', title: 'Isamu Noguchi Lamp',
+    body: 'For 4.657 Design: The History of Making Things, each of us chose one object to study for the whole semester. I chose Isamu Noguchi’s Akari light sculptures. I wrote a catalog entry on the lamp, then gave a product pitch in character as Noguchi himself, presenting Akari to the Mayor of Gifu and the city’s lantern makers in the years after the war.\n\nI love these lanterns so much that I bought one for my dorm room. It is a knockoff, but it is the one in this room.',
+    credit: ['4.657 Design: The History of Making Things', 'February \u2013 May 2025', '<a href="docs/akari-catalog-entry.pdf" target="_blank" rel="noopener">Museum catalog entry (PDF)</a>', 'Sources: <a href="https://form-atelier.com/shop/early-isamu-noguchi-akari-light-sculpture-41s-globe-bamboo-table-lamps" target="_blank" rel="noopener">1</a> · <a href="https://www.ozeki-lantern.com/traditionnal-crafts/" target="_blank" rel="noopener">2</a> · <a href="https://www.ozeki-lantern.com/about-us/" target="_blank" rel="noopener">3</a> · <a href="https://hollycorsiestylist.format.com/blog/design-spotlight-akari-light-sculptures" target="_blank" rel="noopener">4</a> · <a href="https://socialobjects.us/products/early-isamu-noguchi-akari-light-sculpture-floor-lamp-bb3-55d" target="_blank" rel="noopener">5</a> · <a href="https://socialobjects.us/products/early-isamu-noguchi-akari-floor-lamp-10a-1950s" target="_blank" rel="noopener">6</a> · <a href="https://roberthodgin.com/project/akari-lanterns" target="_blank" rel="noopener">7</a> · <a href="https://www.supernormalobjects.com/product/isamu-noguchi-light-sculpture-akari-2n-standing-lamp" target="_blank" rel="noopener">8</a>'],
+    meta: ['Design history', 'Research', 'Presentation'], shot: 'pitch slides',
+    chapters: [
+      { label: 'Product Pitch', shot: 'pitch slides', imgs: [
+        { src: 'img/akari-1.png', alt: 'Title slide reading Akari Light Sculpture, Angelica Zhuang', caption: 'Slide 1\n\nGood morning everyone. I offer my sincere gratitude for this opportunity to be here with you all today and to present an idea born out of a deep respect for your city’s history, its people, and your extraordinary craftsmanship.' },
+        { src: 'img/akari-2.png', alt: 'Archival photographs of a Gifu lantern shop and a pair of painted Gifu lanterns on stands', caption: 'Slide 2\n\nI recently had the pleasure of attending the cormorant fishing festival and was profoundly moved, not just from the incredible show but the way the river was entirely lit up by your lanterns. They danced across the surface of the river and illuminated the water in such a magical way, giving life to the festival. These lanterns left a lasting impression on me.\n\nI am also aware the legacy of the Gifu lantern is now at risk. To be frank, the devastation of the war has definitely taken a hit on the industry with many artisanal workshops now destroyed and this new shift into electric lighting. Additionally, Japan and the broader world is undergoing a transition to more western styles. This rise of electricity and modernization has ushered in a new era where paper and bamboo are struggling to compete with plastic and metal. This 300 year long tradition of candle-lit lanterns is facing an uncertain future. This is the reason I am here, not only to learn from and admire your work but also to offer a way forward.' },
+        { src: 'img/akari-3.png', alt: 'Render of a glowing round Akari lamp on tripod legs in a dim tatami room', caption: 'Slide 3\n\nI would like to introduce you to the Akari Light Sculpture: a reimagining of the Gifu lantern for the modern world. Akari, as you know, means light—in both illumination and weightlessness. This dual meaning is the very essence of what I hope to express through this design. Akari is not just a lamp, it is a bridge between tradition and modernity, between the hand and the machine, between utility and art.\n\nThe Akari Light Sculpture at its heart is a tribute to and a modern interpretation of the Gifu Chochin, one that preserves everything that makes the original so special. The soft and ethereal diffusion of light through your locally sourced washi paper, the organic and elegant lines formed by carefully bent bamboo, and the warmth of the craftsmanship and hand-made quality, are all things to be kept and, more so, to be elevated.' },
+        { src: 'img/akari-4.png', alt: 'Black and white photographs of artisans applying washi paper to lantern frames in a workshop', caption: 'Slide 4\n\nThough the form has changed to be more abstract, the spirit remains. Each sculpture will be made using the very same process perfected by your artisans over generations: mino washi paper applied by hand over delicate bamboo ribs, shaped over wooden molds. Once dried however, the mold will be removed and replaced with a thin metal armature to provide structural integrity and support for an electric bulb. This, I believe, is the key innovation of Akari—not to replace the craft but to adapt it for contemporary living.\n\nThe electric bulb may seem foreign to the tradition but I ask you to consider, is electric powered light not still light? It can come from some man made invention and still be poetic in nature. The electricity simply allows us to reach homes far beyond Gifu, across Japan, and even across the ocean. It makes it possible for the soft warmth of Gifu to fill a living room in Tokyo, New York, or Paris. With Akari, we will give people worldwide a special piece of your culture that is imbued with the same tranquility and elegance.' },
+        { src: 'img/akari-5.png', alt: 'An Akari lamp disassembled into its flat-folded shade, wire frame, legs, bulb and cord, beside its black box', caption: 'Slide 5\n\nBut let me be clear that this is not merely a lamp but also a sculpture. And in calling it such, I don’t want to remove it from everyday life, I want to elevate the everyday. I believe that we don’t have to separate art from function as we have been doing. Beauty can be both practical and meaningful and in a way, I believe everything is sculpture. Akari is just an exemplification of this belief that form and function can coexist.\n\nThe beauty of Akari Light Sculptures is that they are not and will never be stamped from machines. Each one is made by hand and each will bear the unique touch of the craftsman. There is wabi-sabi in them, meaning, the humble beauty of the imperfect and natural. The washi paper breathes, the bamboo bends, and the light filters not for uniformity but for character and this is the soul of Akari.\n\nAnd yet, Akari is also designed for the modern world. Its structure is lightweight, collapsible, and modular in a way that no other furniture invention has ever been. The entire lamp can come apart into 5 simple parts and fold entirely flat, making it ideal for potentially shipping worldwide.' },
+        { src: 'img/akari-6.png', alt: 'White line sketches of dozens of Akari lantern shapes on black', caption: 'Slide 6\n\nThis innovation allows us to imagine a future where Akari lights can travel to a thousand different homes, each suited to different tastes and interiors. They can hang from the ceiling, stand on the floor, or rest on a table. They can be round or oval and sharp or soft. They can even be enormous, like sculptural centerpieces of a space, not just as functional light but a powerful art piece. This scalability ensures that your craft does not remain in the past but it continues to live, to grow, and to inspire. I already envision over a hundred unique designs, each one honoring the lineage of the Gifu lanterns while living in the present. Some are quiet and simple, others are bold and colorful, but all are unmistakably Akari.\n\nMost importantly, Akari can revitalize the Gifu lantern industry without compromising its soul. I propose a partnership, one in which local artisans continue to lead the production of Akari using the same techniques that have been passed down for centuries. But now their work reaches new audiences. I’ve already spoken to and collaborated on a few prototypes with Ozeki & Co, a manufacturing company here in Gifu that have been producing the Gifu lanterns for over 80 years. The incredible craftsmanship of Gifu will become known throughout the world.\n\nAs Japan rebuilds, we have the opportunity to show the world a new vision, one in which we don’t have to discard tradition for the sake of progress but where we can reinterpret it. Akari embodies this philosophy.\n\nHonorable Mayor of Gifu and the broader committee present, what I present to you is more than a new light product but a path forward for Gifu, its artisans, and for Japanese design itself. Let Akari be the light that guides your lanterns into the next era and let it be the symbol of a new Japan where heritage and innovation go hand in hand.\n\nThank you for your time.' }
+      ] }
+    ],
+    zoom: 2.6
+  },
+  laptop: {
+    tag: 'Motion graphics · 2026', title: 'This Website',
+    body: 'This website grew out of a couple of projects I made in 4.502 Architecture in Motion Graphics, where I learned Autodesk 3ds Max and Unity for modeling, rendering and animation.\n\nThe room you are clicking through is a model of my actual dorm room during my senior year: an accumulation of my personality and interests, my memories and experiences. It was the first bedroom I had to myself, and I chose carefully how to decorate and put it together.',
+    credit: ['4.502 Architecture in Motion Graphics', 'Autodesk 3ds Max, Unity', '<a href="https://poly.cam/capture/e3da4eea-d4a5-4cde-9b37-0543710fc875" target="_blank" rel="noopener">3D scan of my room (Polycam)</a>', 'Built with three.js · Type: Space Grotesk, JetBrains Mono'],
+    meta: ['3ds Max', 'Unity', 'Animation'], shot: 'renders',
+    chapters: [
+      { label: 'Room Scan', shot: 'point cloud', video: 'ZYz6iLrlVfY', caption: 'A .ply scan of my room, flown through as a point cloud.' },
+      { label: 'Concept Draft', shot: 'animation', video: 'mkubtfcXakg', caption: 'An early draft of the concept, testing camera moves and pacing before committing to the final animation.' },
+      { label: 'Office Scene', shot: 'animation', video: 'h_Cm8YZioeA', caption: 'A made-up scene modeled and curated inside our professor\u2019s office.' },
+      { label: 'Walkthrough Game', shot: 'unity build', video: 'x2skPlAN2mY', caption: 'The scan of my dorm rebuilt in Unity as a walkthrough, where the objects carry the memories attached to them.' }
+    ],
+    off: [0.5, 0.45, 1.3]
+  },
+  mouse: {
+    tag: 'Professional · 2024', title: 'San Francisco Kitchen Remodel',
+    body: 'For this kitchen remodel project, the initial vision was to design an open layout. Version 1 of the plans prioritized a walkway extending from the front of the house, through the kitchen, and into the back of the house. After meeting with the client, she wanted to pivot and see a version with more secluded spaces. In version 2, the breakfast nook is closed off and there\u2019s an official dividing wall between the kitchen and living space. 3D modeling and rendering every detail of this home from the cabinetry to the crown molding taught me invaluable skills on how to use the different softwares effectively.',
+    credit: ['Huang Iboshi Architecture Inc.', 'June – August 2024', 'Supervisor: Gregory Iboshi'],
+    meta: ['3D Modeling', 'Rendering', 'Interiors'], shot: 'rendering',
+    chapters: [
+      {
+        label: 'Version 1 — Open Layout', shot: 'version 1 renderings',
+        imgs: [
+          { src: 'img/sfk-v1-kitchen.png', alt: 'Rendering of the open kitchen, marble island and walnut cabinetry with a clear sightline through to the living room' },
+          { src: 'img/sfk-v1-living.png', alt: 'Rendering of the living room in the open scheme, bay windows and window seat with the kitchen beyond' }
+        ],
+        caption: 'Version 1 kept a single walkway running from the front of the house, through the kitchen, and into the back.'
+      },
+      {
+        label: 'Version 2 — Secluded', shot: 'version 2 renderings',
+        imgs: [
+          { src: 'img/sfk-v2-kitchen.png', alt: 'Rendering of the revised kitchen with the breakfast nook closed off behind the banquette' },
+          { src: 'img/sfk-v2-living.png', alt: 'Rendering of the living room in the revised scheme, separated from the kitchen by a dividing wall with a cased opening' }
+        ],
+        caption: 'Version 2 closes off the breakfast nook and adds a dividing wall between the kitchen and living space.'
+      },
+      { label: 'Walkthrough', shot: 'video walkthrough', video: 'aMb2PCTdHqk', caption: 'Video walkthrough of the modelled unit.' }
+    ],
+    zoom: 3.2
+  }
+};
+
+/* Monument Valley palette: sandstone, cream, dusty pink, teal void, ink accents */
+const flat = (color, extra = {}) => new THREE.MeshStandardMaterial({ color, roughness: 1, metalness: 0, flatShading: true, ...extra });
+const M = {
+  wall:    flat(0xe4d9c3),
+  wallAlt: flat(0xd6c8ae),
+  floor:   flat(0xcbbb9d),
+  plinth:  flat(0xb9a684),
+  wood:    flat(0xd8c6a4),
+  woodDk:  flat(0xc0aa86),
+  dark:    flat(0x585149),
+  grey:    flat(0xb9b4a8),
+  white:   flat(0xf5efe2),
+  red:     flat(0xe79aa6),
+  pink:    flat(0xf0b3bd),
+  teal:    flat(0x59a7a0),
+  mustard: flat(0xe8c98a),
+  screen:  flat(0x6fb3ac, { emissive: 0x2c6b66, emissiveIntensity: 0.35 }),
+  shade:   flat(0xf7e9cb, { emissive: 0xffdca6, emissiveIntensity: 0 })
+};
+const trimMat = flat(0xf0b3bd);
+const lanternMat = flat(0xfaf3e4, { emissive: 0xffc98a, emissiveIntensity: 0 });
+const windowMat = flat(0xe9f7f9, { emissive: 0xbfe6ee, emissiveIntensity: 0.2, transparent: true, opacity: 0.2, depthWrite: false, side: THREE.DoubleSide });
+
+const scene = new THREE.Scene();
+function skyTexture(top, mid, bottom) {
+  const cv = document.createElement('canvas');
+  cv.width = 8; cv.height = 512;
+  const g = cv.getContext('2d');
+  const grad = g.createLinearGradient(0, 0, 0, 512);
+  grad.addColorStop(0, top); grad.addColorStop(0.45, mid); grad.addColorStop(1, bottom);
+  g.fillStyle = grad; g.fillRect(0, 0, 8, 512);
+  const t = new THREE.CanvasTexture(cv);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+scene.background = skyTexture('#fdf6ea', '#d8eee6', '#5fb3ab');
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFShadowMap;
+renderer.toneMapping = THREE.NoToneMapping;
+document.getElementById('scene').appendChild(renderer.domElement);
+
+/* true isometric: orthographic, fixed iso direction */
+const FRUSTUM = 3.7;
+let ASPECT = 1;
+const camera = new THREE.OrthographicCamera(-FRUSTUM, FRUSTUM, FRUSTUM, -FRUSTUM, 0.1, 200);
+const ISO_A = new THREE.Vector3(1, 0.82, 1).normalize();
+const ISO_B = new THREE.Vector3(0, 0.26, 1).normalize();   /* head-on to the desk wall */
+const HOME_A = { target: new THREE.Vector3(0, 0.35, 0), zoom: 1 };
+const HOME_B = { target: new THREE.Vector3(0.08, 1.30, -1.15), zoom: 2.05 };
+let ISO = ISO_A.clone();
+camera.position.copy(ISO).multiplyScalar(24);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 0.35, 0);
+controls.enableDamping = true;
+controls.dampingFactor = 0.075;
+controls.minZoom = 0.45;
+controls.maxZoom = 4.5;
+controls.maxPolarAngle = Math.PI * 0.495;
+
+const hemi = new THREE.HemisphereLight(0xffffff, 0xdccdb4, 1.15);
+scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xfff6e6, 1.45);
+sun.position.set(6, 8.5, 4.5);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+const sc = sun.shadow.camera;
+sc.left = -7; sc.right = 7; sc.top = 7; sc.bottom = -7; sc.near = 0.5; sc.far = 30;
+sun.shadow.bias = -0.0006;
+sun.shadow.radius = 2;
+scene.add(sun);
+const fill = new THREE.DirectionalLight(0xa8e0da, 0.5);
+fill.position.set(-5, 2.5, -3);
+scene.add(fill);
+const lampLight = new THREE.PointLight(0xffd2a0, 0, 5.4, 1.45);
+const lanternLight = new THREE.PointLight(0xffd0a0, 0, 6.8, 1.35);
+lanternLight.position.set(-1.20, 2.22, 1.00);
+scene.add(lanternLight);
+lampLight.position.set(-1.78, 1.08, -1.32);
+scene.add(lampLight);
+
+const room = new THREE.Group();
+scene.add(room);
+const clickable = [];
+/* hover pop for objects whose visible parts aren't individually clickable */
+const hoverSets = [];
+function hoverSet(key, objs, pivot) {
+  hoverSets.push({ key, pivot, k: 1, items: objs.map(o => ({ o, p: o.position.clone(), s: o.scale.clone() })) });
+}
+
+/* --- water: ombre plane, lily pads, lotus, mirrored reflection --- */
+const WATER_Y = -1.15;
+const water = new THREE.Group();
+scene.add(water);
+
+function waterTexture(inner, mid, outer) {
+  const cv = document.createElement('canvas');
+  cv.width = cv.height = 512;
+  const g = cv.getContext('2d');
+  const grad = g.createRadialGradient(256, 256, 10, 256, 256, 250);
+  grad.addColorStop(0, inner);
+  grad.addColorStop(0.14, inner);
+  grad.addColorStop(0.36, mid);
+  grad.addColorStop(1, outer);
+  g.fillStyle = grad; g.fillRect(0, 0, 512, 512);
+  const t = new THREE.CanvasTexture(cv);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+const waterMat = new THREE.MeshStandardMaterial({
+  map: waterTexture('#3fa7a0', '#9fd9cf', 'rgba(240,250,244,0)'), roughness: 1, metalness: 0,
+  transparent: true, opacity: 0.9, depthWrite: false
+});
+const surface = new THREE.Mesh(new THREE.PlaneGeometry(44, 44), waterMat);
+surface.rotation.x = -Math.PI / 2;
+surface.position.set(0, WATER_Y, 0);
+surface.receiveShadow = true;
+surface.renderOrder = 2;
+water.add(surface);
+
+const padMat = new THREE.MeshStandardMaterial({ color: 0x9ecb74, roughness: 1, flatShading: true });
+const padMatDeep = new THREE.MeshStandardMaterial({ color: 0x82b563, roughness: 1, flatShading: true });
+const lotusMat = new THREE.MeshStandardMaterial({ color: 0xf3aec2, roughness: 1, flatShading: true });
+const flakeMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+
+function pad(x, z, r, deep) {
+  const g = new THREE.CircleGeometry(r, 18, 0.28, Math.PI * 2 - 0.56);
+  const m = new THREE.Mesh(g, deep ? padMatDeep : padMat);
+  m.rotation.x = -Math.PI / 2;
+  m.rotation.z = (x + z) * 1.7;
+  m.position.set(x, WATER_Y + 0.012, z);
+  water.add(m);
+}
+function lotus(x, z) {
+  const g = new THREE.Group();
+  for (let i = 0; i < 6; i++) {
+    const petal = new THREE.Mesh(new THREE.CircleGeometry(0.075, 3), lotusMat);
+    petal.rotation.x = -Math.PI / 2;
+    petal.rotation.z = (i / 6) * Math.PI * 2;
+    petal.position.set(Math.cos(i / 6 * Math.PI * 2) * 0.05, 0, Math.sin(i / 6 * Math.PI * 2) * 0.05);
+    g.add(petal);
+  }
+  g.position.set(x, WATER_Y + 0.02, z);
+  water.add(g);
+}
+function flake(x, z) {
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(0.1, 0.1), flakeMat);
+  m.rotation.x = -Math.PI / 2;
+  m.rotation.z = Math.PI / 4;
+  m.position.set(x, WATER_Y + 0.014, z);
+  water.add(m);
+}
+[[-4.1,1.6,0.26,0],[-3.2,3.1,0.19,1],[-1.4,3.5,0.3,0],[0.9,3.9,0.22,0],[2.9,2.6,0.28,1],[3.9,0.9,0.2,0],[4.4,-1.6,0.27,0],[3.3,-3.4,0.21,1],[0.6,-4.2,0.25,0],[-2.2,-3.6,0.19,0],[-4.6,-2.2,0.28,1],[-5.4,0.2,0.22,0],[-2.6,2.2,0.16,0],[2.2,4.6,0.17,1],[5.2,2.2,0.24,0],[-6.2,-3.4,0.3,0],[6.1,-3.6,0.22,1],[1.9,-5.4,0.26,0]]
+  .forEach(([x, z, r, d]) => pad(x, z, r, d));
+[[-3.6,2.4],[2.4,3.3],[4.6,-0.5],[-1.9,-4.3],[-5.2,-1.1],[1.2,-6.1]].forEach(([x, z]) => lotus(x, z));
+[[-2.9,1.2],[1.7,2.4],[3.6,-2.4],[-3.9,-1.4],[0.2,-3.2],[-1.1,4.4],[5.4,1.1]].forEach(([x, z]) => flake(x, z));
+const fishes = [];
+
+function box(w, h, d, mat, x, y, z, name) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+  m.position.set(x, y, z);
+  m.castShadow = true; m.receiveShadow = true;
+  if (name) m.name = name;
+  room.add(m);
+  return m;
+}
+function cyl(r, h, mat, x, y, z, seg = 20) {
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, h, seg), mat);
+  m.position.set(x, y, z);
+  m.castShadow = true; m.receiveShadow = true;
+  room.add(m);
+  return m;
+}
+function mark(mesh, key) {
+  mesh.userData.project = key;
+  mesh.userData.baseColor = mesh.material.color.getHex();
+  clickable.push(mesh);
+  return mesh;
+}
+
+/* shell — floating monolith: stepped plinth, two walls, pink cornice */
+const floor = box(4.4, 0.12, 3.5, M.floor, 0, -0.06, -0.05, 'floor');
+floor.castShadow = false;
+/* stepped plinth — each step overlaps the one above so no two faces are coplanar (z-fighting) */
+box(4.5, 0.22, 3.6, M.plinth, 0, -0.21, -0.05, 'plinth-1');
+box(4.2, 0.58, 3.3, M.wallAlt, 0, -0.53, -0.05, 'plinth-2');
+box(3.4, 0.62, 2.6, M.plinth, 0, -1.05, -0.05, 'plinth-3');
+box(2.2, 0.76, 1.7, M.wallAlt, 0, -1.68, -0.05, 'plinth-4');
+
+box(4.4, 2.70, 0.1, M.wall, 0, 1.35, -1.75, 'wall-back');
+/* left wall built around two real openings (z -1.005..-0.155 and 0.525..1.375, y 1.225..2.275) */
+box(0.1, 2.70, 0.795, M.wall, -2.15, 1.35, -1.4025, 'wall-left');
+box(0.1, 2.70, 0.680, M.wall, -2.15, 1.35, 0.185, 'wall-left');
+box(0.1, 2.70, 0.325, M.wall, -2.15, 1.35, 1.5375, 'wall-left');
+for (const wz of [-0.58, 0.95]) {
+  box(0.1, 1.225, 0.85, M.wall, -2.15, 0.6125, wz, 'wall-left-under');
+  box(0.1, 0.425, 0.85, M.wall, -2.15, 2.4875, wz, 'wall-left-over');
+}
+/* cornice + base bands */
+box(4.50, 0.16, 0.20, trimMat, 0, 2.78, -1.75, 'cornice-back');
+box(0.20, 0.16, 3.60, trimMat, -2.15, 2.78, -0.05, 'cornice-left');
+box(4.30, 0.10, 0.06, trimMat, 0.05, 0.05, -1.67, 'skirt-back');
+box(0.06, 0.10, 3.34, trimMat, -2.07, 0.05, 0.03, 'skirt-left');
+
+/* rug — plain cream, filling the middle of the room */
+box(2.30, 0.02, 2.00, M.white, 0.55, 0.01, 0.10, 'foreground');
+box(2.14, 0.024, 1.84, flat(0xece2cd), 0.55, 0.015, 0.10, 'foreground');
+
+
+/* ---- screen-right wall (z = -1.70): desk in the corner, then dresser, then wardrobe ---- */
+box(1.30, 0.06, 0.66, M.wood, -1.42, 0.74, -1.35, 'desk-top');
+for (const lx of [-2.00, -0.84]) for (const lz of [-1.62, -1.08]) box(0.06, 0.74, 0.06, M.woodDk, lx, 0.37, lz, 'desk-leg');
+
+/* Zen Cube chair — slatted cube armchair, faces the desk */
+const slatMat = flat(0xe79aa6);
+const slatMatDk = flat(0xd4808f);
+const ZX = -1.42, ZZ = -0.62, ZS = 0.60, ZT = 0.020, ZG = 0.0155;
+const zenStart = room.children.length;
+/* two square side panels: frame plus diagonal slats */
+for (const sx of [-ZS / 2 + ZT / 2, ZS / 2 - ZT / 2]) {
+  box(ZT, ZS, ZT, slatMatDk, ZX + sx, ZS / 2, ZZ - ZS / 2 + ZT / 2, 'zen-post');
+  box(ZT, ZS, ZT, slatMatDk, ZX + sx, ZS / 2, ZZ + ZS / 2 - ZT / 2, 'zen-post');
+  for (const py of [ZT / 2, ZS - ZT / 2]) box(ZT, ZT, ZS, slatMatDk, ZX + sx, py, ZZ, 'zen-rail');
+  /* diagonal infill, corner to corner */
+  for (let i = -6; i <= 6; i++) {
+    const off = i * 0.062;
+    const u = Math.abs(off) * 0.72 * Math.SQRT2;
+    const len = ZS * Math.SQRT2 - 2 * u - 0.03;
+    if (len < 0.05) continue;
+    const d = new THREE.Mesh(new THREE.BoxGeometry(ZT * 0.55, 0.013, len), slatMat);
+    d.position.set(ZX + sx, ZS / 2 + off * 0.72, ZZ + off * 0.72);
+    d.rotation.x = Math.PI / 4;
+    d.castShadow = true; d.receiveShadow = true;
+    room.add(d);
+  }
+}
+/* seat, back and under-seat brace all meet at one junction */
+const inner = ZS - ZT * 2;
+const JZ = ZZ - 0.02, JY = 0.265;
+/* seat slats run forward from the junction */
+for (let i = 0; i < 7; i++) {
+  const z = JZ - 0.028 - i * (ZG + 0.028);
+  if (z < ZZ - ZS / 2 + 0.05) break;
+  box(inner, 0.014, 0.028, slatMat, ZX, JY, z, 'zen-seat-slat');
+}
+/* back slats rise from the junction, centred on the panel */
+for (let i = 0; i < 8; i++) {
+  const y = JY + 0.022 + i * (ZG + 0.024);
+  if (y > ZS - 0.04) break;
+  box(inner, 0.024, 0.014, slatMat, ZX, y, JZ + 0.014, 'zen-back-slat');
+}
+/* diagonal brace: junction down to the bottom back corner */
+const BZ = ZZ + ZS / 2 - 0.05, BY = 0.035;
+for (let i = 1; i <= 7; i++) {
+  const t = i / 7;
+  box(inner, 0.020, 0.020, slatMat, ZX, JY - (JY - BY) * t, JZ + (BZ - JZ) * t, 'zen-brace-slat');
+}
+hoverSet('zen', room.children.slice(zenStart), new THREE.Vector3(ZX, 0.30, ZZ));
+
+/* laptop */
+const lapBase = box(0.34, 0.02, 0.24, M.grey, -1.58, 0.78, -1.28, 'laptop-base');
+const lapLid = box(0.34, 0.23, 0.015, M.grey, -1.58, 0.89, -1.44, 'laptop-lid');
+lapLid.rotation.x = -0.18;
+const lapScreen = box(0.31, 0.20, 0.005, M.screen, -1.58, 0.89, -1.432, 'laptop-screen');
+lapScreen.rotation.x = -0.18;
+mark(lapLid, 'laptop'); mark(lapScreen, 'laptop'); mark(lapBase, 'laptop');
+
+/* computer mouse, on the desk beside the laptop */
+const MSX = -0.94, MSY = 0.770, MSZ = -1.13;
+const mouseBody = new THREE.Mesh(new THREE.SphereGeometry(0.060, 20, 14), M.dark);
+mouseBody.scale.set(0.62, 0.24, 1.25);
+mouseBody.position.set(MSX, MSY + 0.0144, MSZ);
+mouseBody.rotation.y = 0.05;
+mouseBody.castShadow = true; room.add(mouseBody); mark(mouseBody, 'mouse');
+const mouseWheel = box(0.008, 0.006, 0.016, M.grey, MSX - 0.002, MSY + 0.026, MSZ - 0.030, 'mouse-wheel');
+mouseWheel.rotation.y = 0.05;
+mark(mouseWheel, 'mouse');
+/* cord running flat across the desk from the nose of the mouse to the laptop's right side */
+const CORD_Y = 0.7742;
+const cordCurve = new THREE.CatmullRomCurve3([
+  new THREE.Vector3(-0.940, CORD_Y, -1.130),
+  new THREE.Vector3(-1.050, CORD_Y, -1.235),
+  new THREE.Vector3(-1.200, CORD_Y, -1.280),
+  new THREE.Vector3(-1.360, CORD_Y, -1.305),
+  new THREE.Vector3(-1.500, CORD_Y, -1.280)
+]);
+const cord = new THREE.Mesh(new THREE.TubeGeometry(cordCurve, 80, 0.0032, 6, false), M.dark);
+cord.castShadow = true; room.add(cord); mark(cord, 'mouse'); cord.userData.noScale = true;
+/* strain relief where the cord enters the laptop */
+const collarB = cyl(0.0065, 0.016, M.dark, -1.452, CORD_Y + 0.001, -1.284, 10);
+collarB.rotation.z = Math.PI / 2; mark(collarB, 'mouse'); collarB.userData.noScale = true;
+
+/* monitor */
+box(0.16, 0.02, 0.14, M.dark, -1.10, 0.78, -1.54);
+cyl(0.024, 0.22, M.dark, -1.10, 0.88, -1.565, 10);
+const monBezel = box(0.62, 0.36, 0.03, M.dark, -1.10, 1.11, -1.52, 'monitor');
+const monScreen = box(0.58, 0.32, 0.005, M.screen, -1.10, 1.11, -1.502, 'monitor-screen');
+mark(monBezel, 'monitor'); mark(monScreen, 'monitor');
+
+/* two cameras on the dresser — digital mirrorless (left) and 35mm film body (right) */
+const camStart = room.children.length;
+const camBody = box(0.20, 0.14, 0.11, M.dark, -0.38, 0.81, -1.30, 'camera-body');
+const camLens = new THREE.Mesh(new THREE.CylinderGeometry(0.058, 0.064, 0.12, 24), M.grey);
+camLens.rotation.x = Math.PI / 2;
+camLens.position.set(-0.38, 0.81, -1.20);
+camLens.castShadow = true; room.add(camLens);
+box(0.06, 0.04, 0.06, M.grey, -0.30, 0.90, -1.30, 'camera-top');
+/* pentaprism hump, rewind knob and wind lever \u2014 reads as a 35mm SLR */
+box(0.070, 0.038, 0.070, M.dark, -0.385, 0.899, -1.30, 'camera-prism');
+cyl(0.020, 0.022, M.grey, -0.455, 0.891, -1.30, 12);
+box(0.050, 0.010, 0.020, M.grey, -0.325, 0.885, -1.33, 'camera-lever');
+mark(camBody, 'camera'); mark(camLens, 'camera');
+camBody.userData.noScale = camLens.userData.noScale = true;
+hoverSet('camera', room.children.slice(camStart), new THREE.Vector3(-0.38, 0.84, -1.28));
+
+/* camcorder — tapered body, barrel lens off the right end, flip-out LCD on the near side */
+const filmStart = room.children.length;
+const filmBody = box(0.17, 0.105, 0.085, M.white, -0.04, 0.7925, -1.31, 'film-body');
+box(0.172, 0.022, 0.087, M.grey, -0.04, 0.752, -1.31, 'film-grip');
+box(0.06, 0.055, 0.075, M.white, 0.065, 0.792, -1.31, 'film-snout');
+const filmLens = new THREE.Mesh(new THREE.CylinderGeometry(0.044, 0.046, 0.042, 22), M.dark);
+filmLens.rotation.z = Math.PI / 2;
+filmLens.position.set(0.112, 0.792, -1.31);
+filmLens.castShadow = true; room.add(filmLens);
+const filmRing = new THREE.Mesh(new THREE.CylinderGeometry(0.048, 0.048, 0.012, 22), M.grey);
+filmRing.rotation.z = Math.PI / 2;
+filmRing.position.set(0.138, 0.792, -1.31);
+room.add(filmRing);
+/* flip-out screen, hinged open toward the room */
+box(0.008, 0.075, 0.095, M.grey, -0.132, 0.800, -1.262, 'film-lcd-back');
+box(0.004, 0.058, 0.078, M.screen, -0.127, 0.800, -1.262, 'film-lcd');
+/* eyecup and top mic */
+const filmEye = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.022, 0.040, 14), M.dark);
+filmEye.rotation.z = Math.PI / 2;
+filmEye.position.set(-0.142, 0.830, -1.335);
+room.add(filmEye);
+box(0.055, 0.020, 0.030, M.grey, -0.05, 0.855, -1.318, 'film-mic');
+cyl(0.010, 0.014, M.dark, 0.02, 0.852, -1.318, 10);
+mark(filmBody, 'film'); mark(filmLens, 'film');
+filmBody.userData.noScale = filmLens.userData.noScale = true;
+hoverSet('film', room.children.slice(filmStart), new THREE.Vector3(-0.02, 0.82, -1.28));
+
+/* notebook */
+const nb = box(0.26, 0.02, 0.19, M.white, -1.20, 0.78, -1.12, 'notebook');
+mark(nb, 'sketchbook');
+nb.rotation.y = 0.18;
+
+/* desk lamp */
+/* slim all-white desk lamp: disc base, thin stem, short angled arm, shallow shade */
+cyl(0.052, 0.012, M.white, -2.00, 0.767, -1.58, 20);
+cyl(0.009, 0.44, M.white, -2.00, 0.99, -1.58, 10);
+const lampJoint = new THREE.Mesh(new THREE.SphereGeometry(0.016, 10, 8), M.white);
+lampJoint.position.set(-2.00, 1.215, -1.58);
+room.add(lampJoint);
+
+const lampArm = new THREE.Group();
+lampArm.position.set(-1.916, 1.198, -1.496);
+lampArm.quaternion.setFromUnitVectors(
+  new THREE.Vector3(0, 1, 0),
+  new THREE.Vector3(0.70, -0.14, 0.70).normalize()
+);
+room.add(lampArm);
+const armRod = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.24, 8), M.white);
+armRod.castShadow = true;
+lampArm.add(armRod);
+
+/* shade aimed down onto the desk, not at the wall */
+const shadeHead = new THREE.Group();
+shadeHead.position.set(-1.832, 1.176, -1.412);
+shadeHead.quaternion.setFromUnitVectors(
+  new THREE.Vector3(0, -1, 0),
+  new THREE.Vector3(0.28, -0.92, 0.20).normalize()
+);
+room.add(shadeHead);
+const shade = new THREE.Mesh(new THREE.ConeGeometry(0.082, 0.072, 22, 1, true), M.shade);
+shade.castShadow = true;
+shadeHead.add(shade);
+const shadeCap = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, 0.018, 10), M.white);
+shadeCap.position.set(0, 0.042, 0);
+shadeHead.add(shadeCap);
+
+/* dresser shelf — desk height */
+box(0.90, 0.74, 0.60, M.wood, -0.21, 0.37, -1.38, 'dresser');
+for (const dy of [0.22, 0.56]) {
+  box(0.82, 0.30, 0.03, M.woodDk, -0.21, dy, -1.085, 'dresser-drawer');
+  box(0.30, 0.02, 0.02, M.grey, -0.21, dy, -1.06, 'dresser-pull');
+}
+
+/* wardrobe — carcass plus two hinged doors that swing open on hover */
+/* real cavity: back, two sides, top and bottom, so the doors reveal an interior */
+box(0.84, 1.95, 0.04, M.woodDk, 0.78, 0.98, -1.660, 'wardrobe');
+box(0.04, 1.95, 0.56, M.woodDk, 0.38, 0.98, -1.400, 'wardrobe-side');
+box(0.04, 1.95, 0.56, M.woodDk, 1.18, 0.98, -1.400, 'wardrobe-side');
+box(0.84, 0.04, 0.56, M.woodDk, 0.78, 1.935, -1.400, 'wardrobe-top');
+box(0.84, 0.04, 0.56, M.woodDk, 0.78, 0.025, -1.400, 'wardrobe-bottom');
+box(0.76, 1.87, 0.02, flat(0x6d5942), 0.78, 0.98, -1.628, 'wardrobe-interior');
+/* hanging clothes, mid-cavity so they read in front of the dark back */
+box(0.72, 0.024, 0.024, M.grey, 0.78, 1.72, -1.40, 'wardrobe-rail');
+[[0.50, 0.66, 0xe79aa6], [0.62, 0.58, 0xf5efe2], [0.74, 0.70, 0x59a7a0], [0.88, 0.60, 0xe8c98a], [1.00, 0.68, 0xd6c8ae]]
+  .forEach(([cx, ch, cc]) => box(0.10, ch, 0.16, flat(cc), cx, 1.70 - ch / 2, -1.40, 'wardrobe-clothes'));
+
+/* apartment plan model on top of the wardrobe — walls only, no ceiling */
+const planMat = flat(0xf3efe6);
+const planWall = flat(0xe6dfd1);
+const PX = 0.575, PY = 1.966, PZ = -1.40, K = 0.55;
+const planStart = room.children.length;
+box(0.740 * K, 0.022, 0.500 * K, planMat, PX, PY, PZ, 'plan-base');
+[[0.000, -0.250, 0.740, 0.022], [0.000, 0.250, 0.740, 0.022],
+ [-0.370, 0.000, 0.022, 0.500], [0.370, 0.000, 0.022, 0.500],
+ [-0.130, -0.130, 0.022, 0.240], [0.130, 0.060, 0.022, 0.380],
+ [-0.250, 0.010, 0.240, 0.022], [0.010, -0.010, 0.220, 0.022],
+ [0.250, -0.150, 0.220, 0.022], [-0.060, 0.170, 0.140, 0.022],
+ [0.300, 0.170, 0.120, 0.022]]
+  .forEach(([ox, oz, lx, lz]) => box(Math.max(lx * K, 0.010), 0.034, Math.max(lz * K, 0.010), planWall, PX + ox * K, PY + 0.028, PZ + oz * K, 'plan-wall'));
+const planTag = box(0.10 * K, 0.020, 0.070 * K, planWall, PX + 0.235 * K, PY + 0.021, PZ + 0.115 * K, 'plan-block');
+mark(planTag, 'plan').userData.noScale = true;
+hoverSet('plan', room.children.slice(planStart), new THREE.Vector3(PX, PY, PZ));
+
+/* helix tower study — tapering double spiral, on the wardrobe top */
+const helixMat = flat(0xe8c98a);
+const helixDeep = flat(0xd0ad6c);
+const HX = 1.00, HY = 1.962, HZ = -1.40, HH = 0.44, TURNS = 2.1, STEPS = 44;
+const helixStart = room.children.length;
+cyl(0.100, 0.016, helixDeep, HX, HY - 0.004, HZ, 24);
+cyl(0.008, HH, helixDeep, HX, HY + HH / 2, HZ, 10);
+for (let i = 0; i <= STEPS; i++) {
+  const t = i / STEPS;
+  const y = HY + t * HH;
+  const r = 0.084 * (1 - t * 0.78);
+  const a = t * Math.PI * 2 * TURNS;
+  for (const [dir, sign] of [[1, 0], [1, Math.PI], [-1, Math.PI / 2], [-1, -Math.PI / 2]]) {
+    const ang = a * dir + sign;
+    const node = new THREE.Mesh(new THREE.BoxGeometry(0.016, 0.016, 0.016), i % 4 === 0 ? helixDeep : helixMat);
+    node.position.set(HX + Math.cos(ang) * r, y, HZ + Math.sin(ang) * r);
+    node.rotation.y = ang;
+    node.castShadow = true;
+    room.add(node);
+  }
+  if (i % 3 === 0) {
+    for (const ry of [-a, a - Math.PI / 2]) {
+      const rung = new THREE.Mesh(new THREE.BoxGeometry(r * 2, 0.008, 0.008), helixMat);
+      rung.position.set(HX, y, HZ);
+      rung.rotation.y = ry;
+      rung.castShadow = true;
+      room.add(rung);
+    }
+  }
+}
+const helixCap = new THREE.Mesh(new THREE.ConeGeometry(0.020, 0.046, 12), helixDeep);
+helixCap.position.set(HX, HY + HH + 0.023, HZ);
+helixCap.castShadow = true;
+room.add(helixCap);
+mark(helixCap, 'helix').userData.noScale = true;
+hoverSet('helix', room.children.slice(helixStart), new THREE.Vector3(HX, HY + HH / 2, HZ));
+
+const closetDoors = [];
+for (const [hingeX, dir] of [[0.365, 1], [1.195, -1]]) {
+  const hinge = new THREE.Group();
+  hinge.position.set(hingeX, 0.98, -1.105);
+  room.add(hinge);
+  const panel = new THREE.Mesh(new THREE.BoxGeometry(0.415, 1.90, 0.035), M.woodDk);
+  panel.position.set(dir * 0.2075, 0, 0);
+  panel.castShadow = true; panel.receiveShadow = true;
+  panel.name = 'closet-door';
+  panel.userData.project = 'closet';
+  panel.userData.baseScale = 1;
+  panel.userData.noScale = true;
+  hinge.add(panel);
+  clickable.push(panel);
+  const pull = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.30, 0.02), M.grey);
+  pull.position.set(dir * 0.372, 0.07, 0.032);
+  hinge.add(pull);
+  closetDoors.push({ hinge, sign: -dir });
+}
+
+/* wall shelf above the dresser + house model */
+box(0.90, 0.04, 0.24, M.woodDk, -0.21, 1.28, -1.56, 'shelf');
+/* "Side by Side" study model — two abstract houses on a stepped contour platform */
+const siteMat = flat(0xe7e1d3);
+const houseMat = flat(0xe88aa0);
+const deckMat = flat(0xc9647d);
+const treeMat = flat(0xefe9dd);
+const SBS_X = -0.45, SBS_Z = -1.56, SBS_Y = 1.300;
+mark(box(0.38, 0.016, 0.215, siteMat, SBS_X, SBS_Y + 0.008, SBS_Z, 'sbs-base'), 'house');
+mark(box(0.32, 0.012, 0.170, siteMat, SBS_X, SBS_Y + 0.022, SBS_Z - 0.012, 'sbs-contour'), 'house');
+mark(box(0.26, 0.010, 0.120, siteMat, SBS_X, SBS_Y + 0.033, SBS_Z - 0.022, 'sbs-contour'), 'house');
+for (const dx of [-0.068, 0.068]) {
+  mark(box(0.115, 0.020, 0.095, deckMat, SBS_X + dx, SBS_Y + 0.048, SBS_Z + 0.012, 'sbs-deck'), 'house');
+  const body = box(0.095, 0.062, 0.075, houseMat, SBS_X + dx, SBS_Y + 0.089, SBS_Z + 0.004, 'sbs-house');
+  mark(body, 'house');
+  const r = new THREE.Mesh(new THREE.ConeGeometry(0.075, 0.042, 4), houseMat);
+  r.position.set(SBS_X + dx, SBS_Y + 0.141, SBS_Z + 0.004); r.rotation.y = Math.PI / 4;
+  r.castShadow = true; room.add(r); mark(r, 'house');
+  for (const wx of [-0.026, 0.004, 0.032]) {
+    mark(box(0.016, 0.022, 0.008, flat(0xf6e9e2), SBS_X + dx + wx, SBS_Y + 0.092, SBS_Z + 0.043, 'sbs-window'), 'house');
+  }
+}
+for (const [tx, tz, th] of [[-0.145, -0.055, 0.055], [-0.035, -0.070, 0.070], [0.055, -0.052, 0.050], [0.140, -0.068, 0.064]]) {
+  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.004, 0.005, th, 6), treeMat);
+  trunk.position.set(SBS_X + tx, SBS_Y + 0.040 + th / 2, SBS_Z + tz);
+  trunk.castShadow = true; room.add(trunk); mark(trunk, 'house');
+  const crown = new THREE.Mesh(new THREE.SphereGeometry(0.026, 10, 8), treeMat);
+  crown.scale.set(1, 0.55, 1);
+  crown.position.set(SBS_X + tx, SBS_Y + 0.040 + th, SBS_Z + tz);
+  crown.castShadow = true; room.add(crown); mark(crown, 'house');
+}
+/* second study model — teal slab base with eight abstract towers */
+const towerMat = flat(0xd0ad6c);
+const towersStart = room.children.length;
+box(0.42, 0.030, 0.185, M.mustard, -0.06, 1.315, -1.560, 'model-base');
+[[-0.155, -0.043, 0.120], [-0.052, -0.043, 0.190], [0.052, -0.043, 0.085], [0.155, -0.043, 0.155],
+ [-0.155, 0.043, 0.205], [-0.052, 0.043, 0.100], [0.052, 0.043, 0.160], [0.155, 0.043, 0.072]]
+  .forEach(([ox, oz, h]) => box(0.042, h, 0.042, towerMat, -0.06 + ox, 1.320 + h / 2, -1.560 + oz, 'model-tower'));
+hoverSet('towers', room.children.slice(towersStart), new THREE.Vector3(-0.06, 1.33, -1.560));
+
+/* ---- screen-left wall (x = -2.10): two windows, bed in the bottom-left corner ---- */
+function windowUnit(z) {
+  const glass = box(0.02, 1.05, 0.85, windowMat, -2.15, 1.75, z, 'window-glass');
+  glass.castShadow = false; glass.receiveShadow = false; glass.renderOrder = 3;
+  /* pink liners on the reveal faces so the opening reads as one window through the wall */
+  box(0.10, 0.014, 0.85, trimMat, -2.15, 2.268, z, 'reveal');
+  box(0.10, 0.014, 0.85, trimMat, -2.15, 1.232, z, 'reveal');
+  box(0.10, 1.05, 0.014, trimMat, -2.15, 1.75, z - 0.418, 'reveal');
+  box(0.10, 1.05, 0.014, trimMat, -2.15, 1.75, z + 0.418, 'reveal');
+  /* trim + mullions on the room side and again on the outside face */
+  box(0.16, 0.09, 1.05, trimMat, -2.02, 1.19, z, 'window-sill');
+  for (const tx of [-2.07, -2.23]) {
+    box(0.06, 0.08, 1.01, trimMat, tx, 2.33, z, 'window-head');
+    box(0.06, 1.21, 0.08, trimMat, tx, 1.76, z - 0.465, 'window-jamb');
+    box(0.06, 1.21, 0.08, trimMat, tx, 1.76, z + 0.465, 'window-jamb');
+  }
+}
+windowUnit(-0.58); windowUnit(0.95);
+
+/* bed — headboard against the window wall, in the bottom-left corner */
+box(0.08, 0.62, 1.16, M.woodDk, -2.05, 0.48, 1.00, 'foreground');
+box(2.00, 0.24, 1.10, M.wood, -1.05, 0.14, 1.00, 'foreground');
+for (const bx of [-1.95, -0.15]) for (const bz of [0.55, 1.45]) box(0.08, 0.08, 0.08, M.woodDk, bx, 0.04, bz, 'foreground');
+box(1.92, 0.20, 1.06, M.white, -1.03, 0.36, 1.00, 'foreground');
+box(1.10, 0.05, 1.04, M.teal, -0.60, 0.485, 1.00, 'foreground');
+box(0.32, 0.12, 0.80, M.white, -1.82, 0.52, 1.00, 'foreground');
+
+/* paper sphere lantern above the bed */
+const lanternStart = room.children.length;
+const lantern = new THREE.Mesh(new THREE.SphereGeometry(0.27, 22, 16), lanternMat);
+lantern.name = 'foreground';
+lantern.scale.set(1, 0.88, 1);
+lantern.position.set(-1.20, 2.22, 1.00);
+lantern.castShadow = true;
+room.add(lantern);
+for (const ry of [0.15, -0.15]) {
+  const rib = new THREE.Mesh(new THREE.TorusGeometry(0.222, 0.006, 5, 26), M.woodDk);
+  rib.rotation.x = Math.PI / 2;
+  rib.name = 'foreground';
+  rib.position.set(-1.20, 2.22 + ry, 1.00);
+  room.add(rib);
+}
+cyl(0.058, 0.024, M.woodDk, -1.20, 2.452, 1.00, 12).name = 'foreground';
+cyl(0.048, 0.020, M.woodDk, -1.20, 1.988, 1.00, 12).name = 'foreground';
+cyl(0.006, 0.26, M.woodDk, -1.20, 2.575, 1.00, 6).name = 'foreground';
+hoverSet('lantern', room.children.slice(lanternStart), new THREE.Vector3(-1.20, 2.22, 1.00));
+
+/* bike hung nose-up on wall hooks, as if riding up the wall */
+const bikeMount = new THREE.Group();
+bikeMount.position.set(1.75, 1.10, -1.54);
+bikeMount.rotation.z = Math.PI / 2;
+bikeMount.scale.setScalar(0.85);
+room.add(bikeMount);
+hoverSet('bike', [bikeMount], bikeMount.position.clone());
+const bike = new THREE.Group();
+bike.position.set(-1.71, -0.525, 0);
+bikeMount.add(bike);
+
+function tube(x1, y1, x2, y2, r, mat) {
+  const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy);
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, len, 8), mat);
+  m.position.set((x1 + x2) / 2, (y1 + y2) / 2, 0);
+  m.rotation.z = Math.atan2(-dx, dy);
+  m.castShadow = true;
+  bike.add(m);
+}
+function wheel(x) {
+  const t = new THREE.Mesh(new THREE.TorusGeometry(0.30, 0.035, 8, 30), M.dark);
+  t.position.set(x, 0.335, 0);
+  t.castShadow = true;
+  bike.add(t);
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(0.235, 0.014, 6, 26), M.grey);
+  rim.position.set(x, 0.335, 0);
+  bike.add(rim);
+  const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, 0.07, 8), M.grey);
+  hub.rotation.x = Math.PI / 2;
+  hub.position.set(x, 0.335, 0);
+  bike.add(hub);
+  for (let i = 0; i < 6; i++) {
+    const sp = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.47, 0.012), M.grey);
+    sp.position.set(x, 0.335, 0);
+    sp.rotation.z = (i / 6) * Math.PI;
+    bike.add(sp);
+  }
+}
+/* 1.02 wheelbase on 0.67 wheels — real road-bike proportions */
+wheel(1.20); wheel(2.22);
+tube(1.60, 0.30, 1.52, 0.92, 0.022, M.teal);   /* seat tube */
+tube(1.52, 0.92, 2.02, 0.90, 0.022, M.teal);   /* top tube */
+tube(1.60, 0.30, 2.06, 0.72, 0.022, M.teal);   /* down tube */
+tube(2.02, 0.90, 2.11, 0.62, 0.020, M.teal);   /* head tube */
+tube(2.11, 0.62, 2.22, 0.335, 0.018, M.teal);  /* fork */
+tube(1.60, 0.30, 1.20, 0.335, 0.018, M.teal);  /* chain stay */
+tube(1.52, 0.92, 1.20, 0.335, 0.018, M.teal);  /* seat stay */
+tube(2.05, 0.90, 2.05, 1.00, 0.018, M.dark);   /* stem */
+const saddle = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.045, 0.09), M.dark);
+saddle.position.set(1.48, 0.97, 0); saddle.castShadow = true; bike.add(saddle);
+const bars = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.04, 0.38), M.dark);
+bars.position.set(2.05, 1.03, 0); bars.castShadow = true; bike.add(bars);
+const crank = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.075, 0.02, 12), M.grey);
+crank.rotation.x = Math.PI / 2;
+crank.position.set(1.60, 0.30, 0.04); bike.add(crank);
+
+/* wall hooks — front wheel hangs from the top one, rear tyre rests on the lower peg */
+function hook(x) {
+  const plate = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.12, 0.05), M.grey);
+  plate.position.set(x, 0.335, -0.115);
+  bike.add(plate);
+  const arm = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 0.20), M.grey);
+  arm.position.set(x, 0.335, -0.03);
+  arm.castShadow = true;
+  bike.add(arm);
+  const lip = new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.045, 0.045), M.grey);
+  lip.position.set(x - 0.055, 0.335, 0.045);
+  lip.castShadow = true;
+  bike.add(lip);
+}
+hook(2.555); hook(0.865);
+
+/* ---- posters above the desk run (z = -1.70 wall) ---- */
+function poster(w, h, color, x, y, name) {
+  const p = new THREE.Mesh(new THREE.PlaneGeometry(w, h), flat(color));
+  p.material.side = THREE.DoubleSide;
+  p.position.set(x, y, -1.694);
+  p.receiveShadow = true;
+  p.name = name;
+  room.add(p);
+  return p;
+}
+const pA = poster(0.66, 0.53, 0xe8c98a, -1.62, 1.70, 'poster-a');
+/* fragment grid — an abstract of the Dust Bunnies illustrations */
+{
+  const AX = -1.62, AY = 1.70, cell = 0.081, gapX = 0.036, gapY = 0.030;
+  const rows = [
+    '.#..#',
+    '#.##.',
+    '.#.##',
+    '#.#.#'
+  ];
+  const inkPale = flat(0xf7f2e6), inkMid = flat(0xdccfae), inkDark = flat(0x6b5f4a);
+  rows.forEach((row, r) => {
+    for (let c = 0; c < 5; c++) {
+      if (row[c] !== '#') continue;
+      const x = AX + (c - 2) * (cell + gapX);
+      const y = AY + (1.5 - r) * (cell + gapY);
+      const pick = (r * 5 + c) % 7;
+      const mat = pick === 3 ? inkDark : (pick % 3 === 0 ? inkMid : inkPale);
+      const frag = new THREE.Mesh(new THREE.PlaneGeometry(cell, cell), mat);
+      frag.position.set(x, y, -1.6915);
+      frag.name = 'poster-fragment';
+      room.add(frag);
+      /* a hairline edge on the pale fragments, as in the drawings */
+      if (mat !== inkDark) {
+        const edge = new THREE.Mesh(new THREE.PlaneGeometry(cell * 1.06, cell * 1.06), inkMid);
+        edge.position.set(x, y, -1.6925);
+        edge.name = 'poster-fragment-edge';
+        room.add(edge);
+      }
+    }
+  });
+}
+const pB = poster(0.62, 0.62, 0xf5efe2, -0.75, 1.98, 'poster-b');
+/* the mallards site drawing, pinned as the wall poster */
+new THREE.TextureLoader().load('img/springroll-1-site-ducks.png', t => {
+  t.colorSpace = THREE.SRGBColorSpace;
+  pB.material.map = t;
+  pB.material.color.set(0xffffff);
+  pB.material.needsUpdate = true;
+});
+const pC = poster(0.62, 0.62, 0x59a7a0, -0.02, 1.86, 'poster-c');
+/* the Simmons facade study, pinned as the wall poster */
+new THREE.TextureLoader().load('img/simmons-facade-2.png', t => {
+  t.colorSpace = THREE.SRGBColorSpace;
+  pC.material.map = t;
+  pC.material.color.set(0xffffff);
+  pC.material.needsUpdate = true;
+});
+mark(pA, 'posterA'); mark(pB, 'posterB'); mark(pC, 'posterC');
+[[-1.86,2.16,0.30,0.18,0xf5efe2],[-2.06,2.35,0.16,0.18,0xd6c8ae],[-1.70,2.36,0.24,0.10,0xe8c98a],[-1.38,2.34,0.14,0.14,0xf0b3bd],[-1.16,2.20,0.12,0.20,0xf5efe2],[-2.05,1.96,0.14,0.14,0xb9b4a8],[-1.44,2.14,0.28,0.12,0xd6c8ae],[-1.90,1.24,0.16,0.20,0xb9b4a8],[-1.68,1.30,0.22,0.14,0xf5efe2],[-1.45,1.22,0.14,0.22,0xd6c8ae],[-1.25,1.34,0.18,0.12,0xf0b3bd],[-2.04,1.50,0.12,0.16,0xe8c98a],[-1.86,1.49,0.14,0.10,0xd6c8ae],[-1.14,1.50,0.18,0.28,0xe8c98a],[-0.80,2.38,0.24,0.10,0xd6c8ae],[-0.18,2.31,0.34,0.14,0xe8c98a],[0.18,2.30,0.18,0.18,0xf5efe2],[0.62,1.62,0.22,0.30,0xd6c8ae],[0.74,2.08,0.30,0.42,0xf5efe2],[1.14,2.20,0.36,0.14,0xb9b4a8],[1.16,1.92,0.24,0.24,0xd6c8ae],[1.56,2.12,0.26,0.36,0xe8c98a],[1.90,2.22,0.20,0.14,0xb9b4a8]]
+  .forEach(([x, y, w, h, c]) => poster(w, h, c, x, y, 'collage'));
+
+/* pinned bits on the window wall */
+function posterW(w, h, color, z, y) {
+  const p = new THREE.Mesh(new THREE.PlaneGeometry(w, h), flat(color));
+  p.material.side = THREE.DoubleSide;
+  p.position.set(-2.094, y, z);
+  p.rotation.y = Math.PI / 2;
+  p.name = 'collage';
+  room.add(p);
+}
+posterW(0.34, 0.44, 0xf5efe2, 0.32, 1.92);
+posterW(0.28, 0.20, 0x59a7a0, 0.32, 1.50);
+posterW(0.22, 0.30, 0xe8c98a, -1.52, 1.74);
+posterW(0.40, 0.14, 0xe79aa6, -1.52, 2.22);
+
+/* mirrored reflection of the whole room, sitting on the surface */
+const reflection = room.clone(true);
+const reflMat = new THREE.MeshBasicMaterial({ color: 0x2b8c88, transparent: true, opacity: 0.34, depthWrite: false });
+/* fade the reflection out with distance from the water line */
+const FADE_END = WATER_Y - 1.15;
+reflMat.onBeforeCompile = (shader) => {
+  shader.vertexShader = 'varying float vWY;\n' + shader.vertexShader.replace(
+    '#include <begin_vertex>',
+    '#include <begin_vertex>\n  vWY = (modelMatrix * vec4(transformed, 1.0)).y;'
+  );
+  shader.fragmentShader = 'varying float vWY;\n' + shader.fragmentShader.replace(
+    '#include <dithering_fragment>',
+    `#include <dithering_fragment>\n  gl_FragColor.a *= smoothstep(${FADE_END.toFixed(3)}, ${WATER_Y.toFixed(3)}, vWY);`
+  );
+};
+const dropFromMirror = [];
+reflection.traverse(o => {
+  if (!o.isMesh) return;
+  /* the submerged plinth steps mirror back up through the water line and fight the real ones */
+  if (o.name.startsWith('plinth')) { dropFromMirror.push(o); return; }
+  o.material = reflMat; o.castShadow = false; o.receiveShadow = false;
+});
+dropFromMirror.forEach(o => o.parent.remove(o));
+reflection.scale.y = -0.55;
+reflection.position.y = 1.55 * (WATER_Y + 0.004);
+reflection.renderOrder = 1;
+scene.add(reflection);
+
+/* invisible, generously sized pick targets for the small objects */
+function pickProxy(key, w, h, d, x, y, z, layer) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }));
+  m.position.set(x, y, z);
+  if (layer) m.name = layer;
+  m.userData.project = key;
+  m.userData.baseScale = 1;
+  m.userData.proxy = true;
+  room.add(m);
+  clickable.push(m);
+}
+pickProxy('camera', 0.26, 0.22, 0.24, -0.38, 0.85, -1.29);
+pickProxy('film', 0.24, 0.17, 0.20, -0.02, 0.80, -1.30);
+pickProxy('house', 0.40, 0.22, 0.24, -0.45, 1.39, -1.56);
+pickProxy('bike', 0.98, 1.50, 0.40, 1.75, 1.10, -1.50);
+pickProxy('towers', 0.50, 0.30, 0.28, -0.06, 1.40, -1.555);
+pickProxy('plan', 0.46, 0.16, 0.32, 0.575, 2.00, -1.40);
+pickProxy('sketchbook', 0.32, 0.14, 0.25, -1.20, 0.80, -1.12);
+pickProxy('mouse', 0.18, 0.16, 0.20, -0.94, 0.81, -1.13);
+pickProxy('helix', 0.28, 0.52, 0.28, 1.00, 2.19, -1.40);
+pickProxy('zen', 0.66, 0.64, 0.66, -1.42, 0.32, -0.62);
+pickProxy('lantern', 0.58, 0.54, 0.58, -1.20, 2.22, 1.00, 'foreground');
+
+/* sheer curtains — canopy divider hanging into the room along the open side of the bed.
+   Added after the mirror clone so the stacked translucent panels don't blot the reflection. */
+const sheerMat = new THREE.MeshStandardMaterial({
+  color: 0xfdfaf3, roughness: 1, transparent: true, opacity: 0.26,
+  depthWrite: false, side: THREE.DoubleSide
+});
+const rodA = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 2.10, 10), M.grey);
+rodA.rotation.z = Math.PI / 2;
+rodA.position.set(-1.05, 2.56, 0.40);
+rodA.name = 'foreground';
+room.add(rodA);
+const rodB = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 1.28, 10), M.grey);
+rodB.rotation.x = Math.PI / 2;
+rodB.position.set(-0.02, 2.56, 1.02);
+rodB.name = 'foreground';
+room.add(rodB);
+const elbow = new THREE.Mesh(new THREE.SphereGeometry(0.03, 10, 8), M.grey);
+elbow.position.set(-0.02, 2.56, 0.40);
+elbow.name = 'foreground';
+room.add(elbow);
+const dropWire = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.006, 0.16, 6), M.grey);
+dropWire.position.set(-0.02, 2.66, 0.40);
+dropWire.name = 'foreground';
+room.add(dropWire);
+const rodBracket = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.05, 0.05), M.grey);
+rodBracket.position.set(-2.07, 2.56, 0.40);
+rodBracket.name = 'foreground';
+room.add(rodBracket);
+const rodFinial = new THREE.Mesh(new THREE.SphereGeometry(0.032, 10, 8), M.grey);
+rodFinial.position.set(-0.02, 2.56, 1.64);
+rodFinial.name = 'foreground';
+room.add(rodFinial);
+/* panels along the side of the bed, then around the corner across the foot */
+for (let i = 0; i < 14; i++) {
+  const fold = i % 2 === 0 ? 0.0 : 0.045;
+  const panel = new THREE.Mesh(new THREE.BoxGeometry(0.17, 2.42, 0.025), sheerMat);
+  panel.position.set(-2.02 + i * 0.148, 1.32, 0.40 + fold);
+  panel.rotation.y = (i % 2 === 0 ? 1 : -1) * 0.06;
+  panel.renderOrder = 3;
+  panel.name = 'foreground';
+  room.add(panel);
+}
+for (let i = 0; i < 8; i++) {
+  const fold = i % 2 === 0 ? 0.0 : 0.045;
+  const panel = new THREE.Mesh(new THREE.BoxGeometry(0.025, 2.42, 0.17), sheerMat);
+  panel.position.set(-0.02 + fold, 1.32, 0.52 + i * 0.148);
+  panel.rotation.y = (i % 2 === 0 ? 1 : -1) * 0.06;
+  panel.renderOrder = 3;
+  panel.name = 'foreground';
+  room.add(panel);
+}
+
+/* --- interaction --- */
+const ray = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
+const label = document.getElementById('label');
+const panel = document.getElementById('panel');
+let hovered = null, activeKey = null;
+let drag = false, downXY = null;
+
+const home = { pos: camera.position.clone(), target: HOME_A.target.clone(), zoom: HOME_A.zoom };
+let tween = null;
+
+function flyTo(pos, target, zoom = 1, ms = 1100) {
+  if (![pos.x, pos.y, pos.z, target.x, target.y, target.z, zoom].every(Number.isFinite)) return;
+  tween = { t: 0, ms, fromP: camera.position.clone(), fromT: controls.target.clone(), fromZ: camera.zoom, toP: pos, toT: target, toZ: zoom };
+}
+const easeInOut = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+function objectCenter(key) {
+  const box3 = new THREE.Box3();
+  clickable.filter(m => m.userData.project === key).forEach(m => box3.expandByObject(m));
+  return box3.getCenter(new THREE.Vector3());
+}
+
+/* chapters — a project can carry a numbered rail of visuals, each with its own caption */
+let chapterIdx = 0;
+let shotIdx = 0;
+function currentSource() {
+  const p = PROJECTS[activeKey];
+  if (!p) return null;
+  if (!p.chapters) return p;
+  const ch = p.chapters[Math.min(chapterIdx, p.chapters.length - 1)];
+  if (ch.imgs && ch.imgs.length) {
+    const s = ch.imgs[Math.min(shotIdx, ch.imgs.length - 1)];
+    return { ...p, ...ch, img: s.src, alt: s.alt || ch.alt || '', video: s.video || '', caption: s.caption || ch.caption || '' };
+  }
+  return { ...p, ...ch };
+}
+function renderThumbs() {
+  const wrap = document.getElementById('p-thumbs');
+  const p = PROJECTS[activeKey];
+  const ch = p && p.chapters ? p.chapters[Math.min(chapterIdx, p.chapters.length - 1)] : null;
+  wrap.innerHTML = ch && ch.imgs && ch.imgs.length > 1
+    ? ch.imgs.map((s, i) => `<button type="button" data-s="${i}" aria-current="${i === shotIdx}"><img src="${s.src}" alt="" /></button>`).join('')
+    : '';
+  document.getElementById('lb-thumbs').innerHTML = wrap.innerHTML;
+}
+document.getElementById('lb-thumbs').addEventListener('click', e => { e.stopPropagation(); const b = e.target.closest('button[data-s]'); if (b) setShot(+b.dataset.s); });
+document.getElementById('p-thumbs').addEventListener('click', e => {
+  const b = e.target.closest('button[data-s]');
+  if (!b) return;
+  shotIdx = +b.dataset.s;
+  renderThumbs();
+  paintPanelFigure();
+  if (document.getElementById('lightbox').classList.contains('open')) openLightbox();
+});
+function renderRail(p) {
+  const rail = document.getElementById('p-rail');
+  rail.innerHTML = p.chapters
+    ? p.chapters.map((c, i) => `<button type="button" data-i="${i}" aria-current="${i === chapterIdx}">${String(i + 1).padStart(2, '0')} ${c.label}</button>`).join('')
+    : '';
+}
+function paintPanelFigure() {
+  const src = currentSource();
+  if (!src) return;
+  const fig = document.getElementById('p-figure');
+  const la = document.getElementById('p-layer-a'), lbB = document.getElementById('p-layer-b');
+  fig.classList.remove('lifted', 'layered', 'single');
+  document.getElementById('p-caption').textContent = src.caption || '';
+  document.getElementById('p-shot').textContent = src.shot || '';
+  const pv = document.getElementById('p-video');
+  pv.innerHTML = src.video
+    ? `<iframe src="https://www.youtube-nocookie.com/embed/${src.video}?rel=0" title="${src.label || 'Video'}" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe><a class="mono" href="https://youtu.be/${src.video}" target="_blank" rel="noopener">Watch on YouTube</a>`
+    : '';
+  if (src.layers) {
+    la.src = src.layers[0]; lbB.src = src.layers[1];
+    la.alt = src.layerAlt ? src.layerAlt[0] : ''; lbB.alt = src.layerAlt ? src.layerAlt[1] : '';
+    document.getElementById('p-lifthint').textContent = src.liftHint || 'click to lift the layer';
+    fig.classList.add('layered');
+  } else if (src.img) {
+    la.src = src.img; la.alt = src.alt || '';
+    lbB.removeAttribute('src');
+    fig.classList.add('single');
+  } else {
+    la.removeAttribute('src'); lbB.removeAttribute('src');
+  }
+}
+document.getElementById('p-rail').addEventListener('click', e => {
+  const b = e.target.closest('button[data-i]');
+  if (!b) return;
+  setChapter(+b.dataset.i);
+});
+
+function setChapter(i) {
+  const p = PROJECTS[activeKey];
+  if (!p || !p.chapters) return;
+  chapterIdx = Math.max(0, Math.min(i, p.chapters.length - 1));
+  shotIdx = p.chapters[chapterIdx].start || 0;
+  renderRail(p);
+  renderThumbs();
+  paintPanelFigure();
+  if (document.getElementById('lightbox').classList.contains('open')) openLightbox();
+}
+function stepChapter(d) {
+  const p = PROJECTS[activeKey];
+  if (!p || !p.chapters) return;
+  setChapter((chapterIdx + d + p.chapters.length) % p.chapters.length);
+}
+
+function setShot(i) {
+  shotIdx = i;
+  renderThumbs();
+  paintPanelFigure();
+  if (document.getElementById('lightbox').classList.contains('open')) openLightbox();
+}
+/* arrows walk every visual in order, spilling into the next or previous chapter */
+function stepVisual(d) {
+  const p = PROJECTS[activeKey];
+  if (!p || !p.chapters) return;
+  const ch = p.chapters[chapterIdx];
+  const n = (ch.imgs && ch.imgs.length) || 1;
+  const next = shotIdx + d;
+  if (next >= 0 && next < n) { setShot(next); return; }
+  const ci = (chapterIdx + d + p.chapters.length) % p.chapters.length;
+  setChapter(ci);
+  if (d < 0) {
+    const c2 = p.chapters[ci];
+    setShot(((c2.imgs && c2.imgs.length) || 1) - 1);
+  }
+}
+
+function open(key, fromIndex) {
+  const p = PROJECTS[key];
+  if (!p) return;
+  if (!fromIndex) markFound(key);
+  activeKey = key;
+  document.getElementById('p-tag').textContent = p.tag;
+  document.getElementById('p-title').textContent = p.title;
+  document.getElementById('p-body').innerHTML = String(p.body).split(/\n{2,}/)
+    .map(t => `<p>${t.trim().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\*([^*]+)\*/g, '<em>$1</em>')}</p>`).join('');
+  document.getElementById('p-credit').innerHTML = p.credit ? p.credit.map(l => `<div>${l}</div>`).join('') : '';
+  document.getElementById('p-meta').innerHTML = p.meta.map(m => `<span>${m}</span>`).join('');
+  chapterIdx = 0;
+  shotIdx = (p.chapters && p.chapters[0].start) || 0;
+  renderRail(p);
+  renderThumbs();
+  paintPanelFigure();
+  label.style.opacity = 0;
+  document.getElementById('hint').style.opacity = 0;
+  if (isPhone()) {
+    document.getElementById('lbi-tag').textContent = p.tag;
+    document.getElementById('lbi-title').textContent = p.title;
+    document.getElementById('lbi-body').innerHTML = document.getElementById('p-body').innerHTML;
+    document.getElementById('lbi-credit').innerHTML = document.getElementById('p-credit').innerHTML;
+    lb.scrollTop = 0;
+    openLightbox();
+    const c0 = objectCenter(key);
+    flyTo(c0.clone().add(ISO.clone().multiplyScalar(24)), c0, p.zoom || 2.35);
+    return;
+  }
+  panel.classList.add('open');
+
+  // hold the isometric angle; only the target and zoom change
+  const c = objectCenter(key);
+  const zoom = p.zoom || 2.35;
+  const right = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), ISO).normalize();
+  const panelFrac = Math.min(420, innerWidth * 0.42) / innerWidth;
+  const target = c.clone().add(right.multiplyScalar((FRUSTUM * ASPECT / zoom) * panelFrac));
+  flyTo(target.clone().add(ISO.clone().multiplyScalar(24)), target, zoom);
+}
+
+const PZ_KEYS = [...new Set(clickable.map(m => m.userData.project))].filter(k => PROJECTS[k]);
+const pzFound = new Set();
+let pzEls = {};
+function buildPuzzle() {
+  const N = PZ_KEYS.length, cols = Math.ceil(Math.sqrt(N * 1.4)), rows = Math.ceil(N / cols);
+  const s = isPhone() ? 15 : 22, pad = s * 0.3;
+  const has = (c, r) => c >= 0 && r >= 0 && c < cols && r < rows && r * cols + c < N;
+  let seed = 7; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+  const H = {}, V = {};
+  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) { H[r + ',' + c] = rnd() < .5 ? 1 : -1; V[r + ',' + c] = rnd() < .5 ? 1 : -1; }
+  const edge = (ax, ay, bx, by, d) => {
+    if (!d) return `L${bx},${by}`;
+    const tx = (bx - ax) / s, ty = (by - ay) / s, nx = ty * d * s, ny = -tx * d * s;
+    const P = (u, v) => `${(ax + tx * s * u + nx * v).toFixed(2)},${(ay + ty * s * u + ny * v).toFixed(2)}`;
+    return `L${P(.37, 0)} C${P(.2, .32)} ${P(.34, .38)} ${P(.5, .38)} C${P(.66, .38)} ${P(.8, .32)} ${P(.63, 0)} L${bx},${by}`;
+  };
+  let paths = '';
+  PZ_KEYS.forEach((k, i) => {
+    const c = i % cols, r = Math.floor(i / cols), x = pad + c * s, y = pad + r * s;
+    const top = has(c, r - 1) ? -H[r + ',' + c] : 0, bot = has(c, r + 1) ? H[(r + 1) + ',' + c] : 0;
+    const lef = has(c - 1, r) ? -V[r + ',' + c] : 0, rig = has(c + 1, r) ? V[r + ',' + (c + 1)] : 0;
+    const d = `M${x},${y}` + edge(x, y, x + s, y, top) + edge(x + s, y, x + s, y + s, rig) + edge(x + s, y + s, x, y + s, bot) + edge(x, y + s, x, y, lef) + 'Z';
+    const light = 0.56 + ((i * 37) % 11) / 100;
+    paths += `<path data-k="${k}" d="${d}" data-fill="oklch(${light} 0.13 ${12 + ((i * 23) % 30)})" stroke="currentColor" stroke-width="1" stroke-linejoin="round"><title></title></path>`;
+  });
+  let el = document.getElementById('puzzle');
+  if (!el) { el = document.createElement('div'); el.id = 'puzzle'; document.body.appendChild(el); }
+  el.innerHTML = `<svg width="${cols * s + pad * 2}" height="${rows * s + pad * 2}" aria-hidden="true">${paths}</svg><div class="mono pz-count"></div>`;
+  pzEls = {}; el.querySelectorAll('path').forEach(p => pzEls[p.dataset.k] = p);
+  paintPuzzle();
+}
+function paintPuzzle(newKey) {
+  PZ_KEYS.forEach(k => {
+    const p = pzEls[k], on = pzFound.has(k);
+    p.setAttribute('fill', on ? p.dataset.fill : 'currentColor');
+    p.setAttribute('fill-opacity', on ? '1' : '0.04');
+    p.setAttribute('stroke-opacity', on ? '0.35' : '0.3');
+    p.querySelector('title').textContent = on ? PROJECTS[k].title : 'Not found yet';
+    if (k === newKey) { p.classList.remove('new'); void p.getBBox(); p.classList.add('new'); }
+  });
+  const n = pzFound.size, N = PZ_KEYS.length;
+  const el = document.getElementById('puzzle');
+  el.querySelector('.pz-count').textContent = n === N ? `All ${N} found` : `${n} / ${N} found`;
+  el.title = `${n} of ${N} objects discovered`;
+}
+function markFound(key) {
+  if (!PZ_KEYS.includes(key) || pzFound.has(key)) return;
+  pzFound.add(key);
+  paintPuzzle(key);
+}
+buildPuzzle();
+matchMedia('(max-width: 760px)').addEventListener('change', buildPuzzle);
+
+function isPhone() { return matchMedia('(max-width: 760px)').matches; }
+function close() {
+  closing = true; closeLightbox(); closing = false;
+  activeKey = null;
+  panel.classList.remove('open');
+  document.getElementById('hint').style.opacity = '';
+  flyTo(home.pos.clone(), home.target.clone(), home.zoom);
+}
+/* expanded view — same lift interaction, larger frame */
+const lb = document.getElementById('lightbox');
+const lbFrame = document.getElementById('lb-frame');
+const lbHint = document.getElementById('lb-lifthint');
+function lbSync(lifted) {
+  if (!lbFrame.classList.contains('layered')) return;
+  lbHint.textContent = lifted ? 'click to lay it back down' : (currentSource()?.liftHint || 'click to lift the layer');
+}
+function openLightbox() {
+  const p = currentSource();
+  if (!p) return;
+  const a = document.getElementById('lb-layer-a'), b = document.getElementById('lb-layer-b');
+  lbFrame.classList.remove('lifted', 'layered', 'single');
+  if (p.layers) {
+    a.src = p.layers[0]; b.src = p.layers[1];
+    a.alt = p.layerAlt ? p.layerAlt[0] : ''; b.alt = p.layerAlt ? p.layerAlt[1] : '';
+    lbFrame.classList.add('layered');
+  } else if (p.img) {
+    a.src = p.img; a.alt = p.alt || '';
+    b.removeAttribute('src');
+    lbFrame.classList.add('single');
+  } else {
+    a.removeAttribute('src'); b.removeAttribute('src');
+    document.getElementById('lb-empty').textContent = (p.shot || '') + ' — image slot';
+  }
+  document.getElementById('lb-caption').textContent = p.caption ? `${p.title} — ${p.caption}` : p.title;
+  document.getElementById('lb-video').innerHTML = p.video
+    ? `<iframe src="https://www.youtube-nocookie.com/embed/${p.video}?rel=0" title="${p.label || 'Video'}" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`
+    : '';
+  const proj = PROJECTS[activeKey];
+  const many = !!(proj && proj.chapters && proj.chapters.length > 1);
+  document.getElementById('lb-prev').style.display = many ? 'grid' : 'none';
+  document.getElementById('lb-next').style.display = many ? 'grid' : 'none';
+  document.getElementById('lb-rail').innerHTML = many
+    ? proj.chapters.map((c, i) => `<button type="button" data-i="${i}" aria-current="${i === chapterIdx}">${String(i + 1).padStart(2, '0')} ${c.label}</button>`).join('')
+    : '';
+  lbSync(false);
+  lb.classList.add('open');
+  lb.setAttribute('aria-hidden', 'false');
+}
+let closing = false;
+function closeLightbox() {
+  document.getElementById('lb-video').innerHTML = '';
+  lb.classList.remove('open');
+  lb.setAttribute('aria-hidden', 'true');
+  if (!closing && isPhone() && activeKey) close();
+}
+document.getElementById('p-expand').addEventListener('click', e => { e.stopPropagation(); openLightbox(); });
+document.getElementById('p-expand-tab').addEventListener('click', e => { e.stopPropagation(); openLightbox(); });
+document.getElementById('lb-close').addEventListener('click', closeLightbox);
+lb.addEventListener('click', e => { if (e.target === lb) closeLightbox(); });
+lbFrame.addEventListener('click', () => {
+  if (swipeJustHappened) { swipeJustHappened = false; return; }
+  if (!lbFrame.classList.contains('layered')) return;
+  lbSync(lbFrame.classList.toggle('lifted'));
+});
+document.getElementById('lb-prev').addEventListener('click', e => { e.stopPropagation(); stepChapter(-1); });
+document.getElementById('lb-next').addEventListener('click', e => { e.stopPropagation(); stepChapter(1); });
+document.getElementById('lb-rail').addEventListener('click', e => {
+  const b = e.target.closest('button[data-i]');
+  if (b) setChapter(+b.dataset.i);
+});
+/* swipe between chapters inside the expanded view */
+let swipeJustHappened = false;
+{
+  let sx = 0, sy = 0, swiping = false;
+  lbFrame.addEventListener('pointerdown', e => { sx = e.clientX; sy = e.clientY; swiping = true; });
+  lbFrame.addEventListener('pointerup', e => {
+    if (!swiping) return;
+    swiping = false;
+    const dx = e.clientX - sx, dy = e.clientY - sy;
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.4) {
+      e.stopPropagation();
+      swipeJustHappened = true;
+      stepChapter(dx < 0 ? 1 : -1);
+    }
+  }, true);
+  lbFrame.addEventListener('pointercancel', () => { swiping = false; });
+}
+
+const figure = document.getElementById('p-figure');
+figure.addEventListener('click', () => {
+  if (!figure.classList.contains('layered')) return;
+  const lifted = figure.classList.toggle('lifted');
+  document.getElementById('p-lifthint').textContent = lifted ? 'click to lay it back down' : (currentSource()?.liftHint || 'click to lift the layer');
+});
+
+document.getElementById('close').addEventListener('click', close);
+addEventListener('keydown', e => {
+  if ((activeKey || lb.classList.contains('open')) && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) {
+    e.preventDefault();
+    stepVisual(e.key === 'ArrowRight' ? 1 : -1);
+    return;
+  }
+  if (e.key !== 'Escape') return;
+  if (lb.classList.contains('open')) closeLightbox(); else close();
+});
+
+window.__dbg = { scene, camera, controls, open, hoverSets };
+renderer.domElement.addEventListener('pointerdown', e => { drag = false; downXY = [e.clientX, e.clientY]; });
+renderer.domElement.addEventListener('pointermove', e => {
+  if (downXY && Math.hypot(e.clientX - downXY[0], e.clientY - downXY[1]) > 5) drag = true;
+  pointer.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
+  ray.setFromCamera(pointer, camera);
+  const hit = pickHit();
+  const key = hit ? hit.object.userData.project : null;
+  if (key !== hovered) {
+    hovered = key;
+    renderer.domElement.style.cursor = key ? 'pointer' : 'grab';
+    label.style.opacity = key && !activeKey ? 1 : 0;
+    if (key) label.textContent = PROJECTS[key].title;
+  }
+  if (key) { label.style.left = e.clientX + 'px'; label.style.top = e.clientY + 'px'; }
+});
+function pickHit() {
+  const hits = ray.intersectObjects(clickable, false);
+  if (!hits.length) return null;
+  /* a real mesh under the cursor beats an invisible pick proxy at similar depth */
+  const solid = hits.find(h => !h.object.userData.proxy);
+  return solid && solid.distance < hits[0].distance + 0.3 ? solid : hits[0];
+}
+renderer.domElement.addEventListener('pointerup', e => {
+  if (drag) { downXY = null; return; }
+  downXY = null;
+  pointer.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
+  ray.setFromCamera(pointer, camera);
+  const hit = pickHit();
+  if (hit) open(hit.object.userData.project); else if (activeKey) close();
+});
+
+/* day / night */
+let night = false;
+const btnLight = document.getElementById('btn-light');
+btnLight.addEventListener('click', () => {
+  setNight(!night);
+});
+function setNight(v) {
+  night = v;
+  btnLight.setAttribute('aria-pressed', String(night));
+  btnLight.textContent = night ? 'Day' : 'Night';
+  document.body.classList.toggle('night', night);
+  sun.intensity = night ? 0.20 : 1.45;
+  hemi.intensity = night ? 0.62 : 1.15;
+  hemi.color.set(night ? 0xffdcb0 : 0xffffff);
+  hemi.groundColor.set(night ? 0x4a4436 : 0xdccdb4);
+  fill.intensity = night ? 0.24 : 0.5;
+  lampLight.intensity = night ? 1.45 : 0;
+  lanternLight.intensity = night ? 1.5 : 0;
+  lanternMat.emissiveIntensity = night ? 1.15 : 0;
+  M.shade.emissiveIntensity = night ? 0.45 : 0;
+  M.screen.emissiveIntensity = night ? 0.62 : 0.35;
+  waterMat.map = waterTexture(night ? '#1d4460' : '#3fa7a0', night ? '#2c5675' : '#9fd9cf', night ? 'rgba(38,68,92,0)' : 'rgba(240,250,244,0)');
+  waterMat.needsUpdate = true;
+  reflMat.color.set(night ? 0x14324a : 0x2f8f8a);
+  scene.background = skyTexture(night ? '#1a2a3e' : '#fdf6ea', night ? '#23405a' : '#d8eee6', night ? '#16344c' : '#5fb3ab');
+}
+/* follow the visitor's own clock on first load — night between 7pm and 7am */
+{
+  const h = new Date().getHours();
+  if (h >= 19 || h < 7) setNight(true);
+}
+
+/* second perspective: head-on elevation of the desk wall — posters, desk, dresser, bike.
+   The bed, curtains, rug and lantern sit between camera and wall, so they drop out. */
+const foreground = [];
+room.traverse(o => { if (o.isMesh && o.name === 'foreground') foreground.push(o); });
+let viewB = false;
+/* on narrow portrait screens, pull back so the whole room / wall fits */
+function homeZoom() { const hv = viewB ? HOME_B : HOME_A; return hv.zoom * Math.min(1, ASPECT / (viewB ? 1.5 : 0.85)); }
+const btnView = document.getElementById('btn-view');
+btnView.addEventListener('click', () => {
+  btnView.classList.remove('nudge');
+  viewB = !viewB;
+  ISO = (viewB ? ISO_B : ISO_A).clone();
+  const h = viewB ? HOME_B : HOME_A;
+  home.target = h.target.clone();
+  home.zoom = homeZoom();
+  home.pos = h.target.clone().add(ISO.clone().multiplyScalar(24));
+  btnView.textContent = viewB ? 'Room view' : 'Wall view';
+  btnView.setAttribute('aria-pressed', String(viewB));
+  foreground.forEach(o => { o.visible = !viewB; });
+  if (activeKey) open(activeKey);
+  else flyTo(home.pos.clone(), home.target.clone(), home.zoom, 1300);
+});
+try {
+  setTimeout(() => { if (!viewB) btnView.classList.add('nudge'); }, 4200);
+} catch (e) {
+  setTimeout(() => { if (!viewB) btnView.classList.add('nudge'); }, 4200);
+}
+
+/* ambience — looping track, faded in and out */
+let audio = null, playing = false;
+const btnSound = document.getElementById('btn-sound');
+btnSound.addEventListener('click', () => {
+  if (!audio) {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const el = new Audio('audio/ambience.mp3');
+    el.loop = true; el.preload = 'auto'; el.crossOrigin = 'anonymous';
+    const src = ctx.createMediaElementSource(el);
+    const gain = ctx.createGain(); gain.gain.value = 0;
+    src.connect(gain); gain.connect(ctx.destination);
+    audio = { ctx, gain, el };
+  }
+  playing = !playing;
+  audio.ctx.resume();
+  if (playing) audio.el.play();
+  audio.gain.gain.cancelScheduledValues(audio.ctx.currentTime);
+  audio.gain.gain.setValueAtTime(audio.gain.gain.value, audio.ctx.currentTime);
+  audio.gain.gain.linearRampToValueAtTime(playing ? 0.35 : 0, audio.ctx.currentTime + 1.2);
+  if (!playing) { const el = audio.el; setTimeout(() => { if (!playing) el.pause(); }, 1300); }
+  btnSound.setAttribute('aria-pressed', String(playing));
+});
+
+/* resize + loop */
+function resize() {
+  ASPECT = innerWidth / innerHeight;
+  camera.left = -FRUSTUM * ASPECT; camera.right = FRUSTUM * ASPECT;
+  camera.top = FRUSTUM; camera.bottom = -FRUSTUM;
+  camera.updateProjectionMatrix();
+  home.zoom = homeZoom();
+  renderer.setSize(innerWidth, innerHeight);
+}
+addEventListener('resize', resize);
+resize();
+/* the canvas can be laid out at zero size on first paint — keep it in step with the container */
+new ResizeObserver(resize).observe(document.getElementById('scene'));
+
+let prev = performance.now();
+renderer.setAnimationLoop(() => {
+  const now = performance.now();
+  const dt = Math.min(0.05, (now - prev) / 1000);
+  prev = now;
+  if (tween) {
+    tween.t = Math.min(1, tween.t + (dt * 1000) / tween.ms);
+    const e = easeInOut(tween.t);
+    camera.position.lerpVectors(tween.fromP, tween.toP, e);
+    controls.target.lerpVectors(tween.fromT, tween.toT, e);
+    camera.zoom = THREE.MathUtils.lerp(tween.fromZ, tween.toZ, e);
+    camera.updateProjectionMatrix();
+    if (tween.t >= 1) tween = null;
+  }
+  clickable.forEach(m => {
+    if (m.userData.noScale) return;
+    const base = m.userData.baseScaleVec ??= m.scale.clone();
+    const on = m.userData.project === hovered || m.userData.project === activeKey;
+    const want = on ? 1.045 : 1;
+    const k = m.userData.hoverK = (m.userData.hoverK ?? 1) + (want - (m.userData.hoverK ?? 1)) * Math.min(1, dt * 10);
+    m.scale.set(base.x * k, base.y * k, base.z * k);
+  });
+  hoverSets.forEach(h => {
+    const want = (h.key === hovered || h.key === activeKey) ? 1.045 : 1;
+    h.k += (want - h.k) * Math.min(1, dt * 10);
+    h.items.forEach(({ o, p, s }) => {
+      o.scale.set(s.x * h.k, s.y * h.k, s.z * h.k);
+      o.position.set(
+        h.pivot.x + (p.x - h.pivot.x) * h.k,
+        h.pivot.y + (p.y - h.pivot.y) * h.k,
+        h.pivot.z + (p.z - h.pivot.z) * h.k
+      );
+    });
+  });
+  /* closet doors ease open while hovered or open */
+  const ajar = (hovered === 'closet' || activeKey === 'closet') ? 0.46 : 0;
+  const ease = Math.min(1, dt * 6);
+  closetDoors.forEach(d => { d.hinge.rotation.y += (d.sign * ajar - d.hinge.rotation.y) * ease; });
+  const tsec = now / 1000;
+  fishes.forEach(f => {
+    const a = tsec * f.speed + f.phase;
+    f.g.position.x = f.cx + Math.cos(a) * f.rx;
+    f.g.position.z = f.cz + Math.sin(a) * f.rz;
+    const dx = -Math.sin(a) * f.rx * f.speed;
+    const dz = Math.cos(a) * f.rz * f.speed;
+    f.g.rotation.y = Math.atan2(dz, dx) * -1;
+    f.tail.rotation.y = Math.sin(tsec * 4.5 + f.phase) * 0.5;
+  });
+  controls.update();
+  renderer.render(scene, camera);
+});
+
+/* intro */
+window.__room = { open, close, render: () => renderer.render(scene, camera) };
+home.zoom = homeZoom();
+camera.zoom = 0.72 * home.zoom;
+camera.updateProjectionMatrix();
+flyTo(home.pos.clone(), home.target.clone(), home.zoom, 1700);
+
+/* index: every project, grouped by category */
+{
+  const CATS = [
+    ['Architecture', ['monitor', 'towers', 'house', 'posterB', 'posterC', 'posterA', 'plan', 'mouse']],
+    ['Design', ['zen', 'closet', 'helix', 'laptop', 'sketchbook', 'lantern']],
+    ['Photography', (PROJECTS.camera?.chapters || []).map((_, i) => 'camera:' + i)],
+    ['Videography', [...(PROJECTS.film?.chapters || []).map((_, i) => 'film:' + i), 'bike']]
+  ].map(([n, ks]) => [n, ks.filter(k => PROJECTS[k.split(':')[0]])]);
+  const ix = document.getElementById('index'), btn = document.getElementById('index-btn');
+  const list = document.getElementById('ix-list'), filters = document.getElementById('ix-filters');
+  let cat = 'All';
+  const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  const thumb = p => {
+    const pick = o => o && (o.src || o.img || o.a || o.layerA || (o.layers && pick(o.layers[0])));
+    for (const c of p.chapters || []) { const s = pick(c) || (c.imgs || []).map(pick).find(Boolean); if (s && typeof s === 'string') return s; }
+    for (const c of p.chapters || []) { const v = c.video || (c.imgs || []).map(i => i.video).find(Boolean); if (v) return `https://img.youtube.com/vi/${v}/hqdefault.jpg`; }
+    return p.img || (p.layers && (p.layers[1] || p.layers[0])) || '';
+  };
+  const COVERS = { monitor: 'img/grid-model-angle.png', house: 'img/sbs-model-aerial.jpg', posterC: 'img/simmons-print.jpg', plan: 'img/nya-model-aerial.png' };
+  const card = id => { const [k, ci] = id.split(':'), p = PROJECTS[k], ch = ci != null && p.chapters[+ci];
+    const s = ch ? thumb({ chapters: [ch] }) : (COVERS[k] || thumb(p)), title = ch ? ch.label : p.title, tag = ch ? (ch.shot || p.tag) : p.tag;
+    return `<button class="ix-card" type="button" data-k="${id}"><div class="ix-thumb">${s ? `<img src="${s}" alt="" loading="lazy">` : ''}</div><strong>${esc(title)}</strong><span class="mono">${esc(tag)}</span></button>`; };
+  const total = CATS.reduce((a, c) => a + c[1].length, 0);
+  function render() {
+    filters.innerHTML = [['All', total], ...CATS.map(([n, ks]) => [n, ks.length])]
+      .map(([n, c]) => `<button type="button" data-c="${n}" aria-pressed="${n === cat}">${n}<span>${c}</span></button>`).join('');
+    list.innerHTML = CATS.filter(([n]) => cat === 'All' || cat === n).map(([n, ks]) =>
+      `<section class="ix-sec">${cat === 'All' ? `<h3 class="mono"><span>${n}</span><span>${ks.length}</span></h3>` : ''}<div class="ix-grid">${ks.map(card).join('')}</div></section>`).join('');
+  }
+  function setOpen(o) {
+    ix.classList.toggle('open', o); ix.setAttribute('aria-hidden', String(!o)); btn.setAttribute('aria-expanded', String(o));
+    if (o) { render(); ix.scrollTop = 0; const a = document.getElementById('about'); if (a && !a.hidden) { a.hidden = true; document.getElementById('about-btn').setAttribute('aria-expanded', 'false'); } }
+  }
+  btn.addEventListener('click', e => { e.stopPropagation(); setOpen(!ix.classList.contains('open')); });
+  document.getElementById('ix-close').addEventListener('click', () => setOpen(false));
+  filters.addEventListener('click', e => { const b = e.target.closest('button'); if (b) { cat = b.dataset.c; render(); } });
+  list.addEventListener('click', e => { const b = e.target.closest('.ix-card'); if (b) { const [k, ci] = b.dataset.k.split(':'); setOpen(false); open(k, true); if (ci != null) setChapter(+ci); } });
+  ['pointerdown', 'wheel', 'touchstart'].forEach(ev => ix.addEventListener(ev, e => e.stopPropagation()));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && ix.classList.contains('open')) setOpen(false); });
+}
+setTimeout(() => document.getElementById('loader').classList.add('gone'), 350);
+</script>
+</body>
+</html>
