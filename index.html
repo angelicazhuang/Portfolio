@@ -1982,6 +1982,7 @@ function closeLightbox() {
   document.getElementById('lb-video').innerHTML = '';
   lb.classList.remove('open');
   lb.setAttribute('aria-hidden', 'true');
+  if (window.__fromIndex) { window.__fromIndex = false; if (activeKey) close(); setTimeout(() => window.__openIndex && window.__openIndex(), 0); return; }
   if (!closing && isPhone() && activeKey) close();
 }
 document.getElementById('p-expand').addEventListener('click', e => { e.stopPropagation(); openLightbox(); });
@@ -2258,8 +2259,9 @@ flyTo(home.pos.clone(), home.target.clone(), home.zoom, 1700);
   }
   btn.addEventListener('click', e => { e.stopPropagation(); setOpen(!ix.classList.contains('open')); });
   document.getElementById('ix-close').addEventListener('click', () => setOpen(false));
+  window.__openIndex = () => { const s = ix.scrollTop; setOpen(true); ix.scrollTop = s; };
   filters.addEventListener('click', e => { const b = e.target.closest('button'); if (b) { cat = b.dataset.c; render(); } });
-  list.addEventListener('click', e => { const b = e.target.closest('.ix-card'); if (b) { const [k, ci] = b.dataset.k.split(':'); setOpen(false); open(k, true); if (ci != null) setChapter(+ci); } });
+  list.addEventListener('click', e => { const b = e.target.closest('.ix-card'); if (b) { const [k, ci] = b.dataset.k.split(':'); setOpen(false); open(k, true); if (ci != null) setChapter(+ci); window.__fromIndex = true; openLightbox(); } });
   ['pointerdown', 'wheel', 'touchstart'].forEach(ev => ix.addEventListener(ev, e => e.stopPropagation()));
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && ix.classList.contains('open')) setOpen(false); });
 }
