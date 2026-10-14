@@ -1890,7 +1890,7 @@ const PZ_KEYS = [...new Set(clickable.map(m => m.userData.project))].filter(k =>
 const pzFound = new Set();
 let pzEls = {};
 function buildPuzzle() {
-  const N = PZ_KEYS.length, cols = Math.ceil(Math.sqrt(N * 1.4)), rows = Math.ceil(N / cols);
+  const N = PZ_KEYS.length, cols = 4, rows = Math.ceil(N / cols);
   const s = isPhone() ? 15 : 22, pad = s * 0.3;
   const has = (c, r) => c >= 0 && r >= 0 && c < cols && r < rows && r * cols + c < N;
   let seed = 7; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
